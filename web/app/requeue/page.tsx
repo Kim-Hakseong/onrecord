@@ -15,25 +15,45 @@ import {
  *  the card, so it collapses to its first line until asked for. */
 function NextGoal({ card }: { card: RequeueCard }) {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const questions = card.next_fields.length;
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(card.next_goal);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard blocked: the text is on screen under "show" anyway */
+    }
+  }
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2 text-left"
-      >
-        <Label>
-          next goal · {questions} {questions === 1 ? "question" : "questions"}
-        </Label>
-        <span
-          className="text-[11px]"
-          style={{ color: "var(--ink-3)" }}
-          aria-hidden="true"
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          className="flex items-center gap-2 text-left"
         >
-          {open ? "hide" : "show"}
-        </span>
-      </button>
+          <Label>
+            next goal · {questions} {questions === 1 ? "question" : "questions"}
+          </Label>
+          <span className="text-[11px]" style={{ color: "var(--ink-3)" }}>
+            {open ? "hide" : "show"}
+          </span>
+        </button>
+        {open ? (
+          <button
+            type="button"
+            onClick={copy}
+            className="pill px-2.5 py-1 text-[11px]"
+            style={{ background: "var(--surface-sunken)", color: "var(--ink-2)" }}
+          >
+            {copied ? "copied" : "copy"}
+          </button>
+        ) : null}
+      </div>
 
       <div className="mt-2 flex flex-wrap gap-1.5">
         {card.next_fields.map((field) => (
@@ -109,7 +129,7 @@ export default function RequeueScreen() {
           return (
             <article
               key={card.subject_id}
-              className="panel p-5"
+              className="panel lift p-5"
               style={{ opacity: exhausted ? 0.62 : 1 }}
             >
               <header className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -204,7 +224,7 @@ export default function RequeueScreen() {
                         ? "no attempts left"
                         : "places a real call and spends call budget"
                   }
-                  className="pill px-5 py-2.5 text-[13px] font-medium disabled:cursor-not-allowed disabled:opacity-45"
+                  className="pill lift px-5 py-2.5 text-[13px] font-medium disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
                   style={{
                     background: "var(--accent)",
                     color: "var(--accent-ink)",

@@ -50,7 +50,7 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      className="pill grid h-9 w-9 place-items-center border"
+      className="pill lift grid h-9 w-9 place-items-center border"
       style={{
         background: "var(--surface-solid)",
         borderColor: "var(--hairline)",

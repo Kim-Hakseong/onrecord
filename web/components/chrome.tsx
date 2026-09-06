@@ -70,7 +70,7 @@ export function Header({
               <Link
                 key={screen.href}
                 href={screen.href}
-                className="pill px-3 py-1.5 text-[13px]"
+                className="pill lift px-3 py-1.5 text-[13px]"
                 style={{
                   background: active ? "var(--surface-solid)" : "transparent",
                   color: active ? "var(--ink)" : "var(--ink-3)",

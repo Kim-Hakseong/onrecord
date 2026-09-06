@@ -56,9 +56,14 @@ export function VerdictBadge({
 export function VerdictCounts({
   counts,
   compact = false,
+  selected,
+  onSelect,
 }: {
   counts: Record<VerdictName, number>;
   compact?: boolean;
+  /** When provided, the chips become filters for the list below them. */
+  selected?: VerdictName | null;
+  onSelect?: (verdict: VerdictName | null) => void;
 }) {
   return (
     <div className={`flex flex-wrap items-center ${compact ? "gap-2" : "gap-2.5"}`}>
@@ -66,25 +71,53 @@ export function VerdictCounts({
           zero is itself a fact about the ledger. */}
       {VERDICTS.map((verdict) => {
         const value = counts?.[verdict] ?? 0;
-        return (
-          <span
-            key={verdict}
-            className={`pill inline-flex items-center gap-1.5 ${
-              compact ? "px-2 py-[2px]" : "px-3 py-1"
-            }`}
-            style={{
-              background: TINT[verdict],
-              color: FG[verdict],
-              opacity: value === 0 ? 0.55 : 1,
-            }}
-          >
+        const active = selected === verdict;
+        const dimmed = selected !== null && selected !== undefined && !active;
+        const content = (
+          <>
             <span className="font-mono text-[13px] font-medium tabular-nums">
               {value}
             </span>
             <span className={compact ? "text-[11px]" : "text-[12px]"}>
               {LABEL[verdict]}
             </span>
-          </span>
+          </>
+        );
+        const className = `pill inline-flex items-center gap-1.5 ${
+          compact ? "px-2 py-[2px]" : "px-3 py-1"
+        }`;
+        const style = {
+          background: TINT[verdict],
+          color: FG[verdict],
+          opacity: dimmed ? 0.35 : value === 0 ? 0.55 : 1,
+          boxShadow: active ? `0 0 0 2px ${FG[verdict]}` : undefined,
+        };
+
+        if (!onSelect) {
+          return (
+            <span key={verdict} className={className} style={style}>
+              {content}
+            </span>
+          );
+        }
+        return (
+          <button
+            key={verdict}
+            type="button"
+            className={`${className} lift`}
+            style={style}
+            aria-pressed={active}
+            title={
+              value === 0
+                ? `No ${LABEL[verdict].toLowerCase()} fields`
+                : active
+                  ? "Show every verdict again"
+                  : `Show only ${LABEL[verdict].toLowerCase()} fields`
+            }
+            onClick={() => onSelect(active ? null : verdict)}
+          >
+            {content}
+          </button>
         );
       })}
     </div>

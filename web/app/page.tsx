@@ -11,13 +11,14 @@ import {
   type LedgerResponse,
   type LedgerRow,
   type Meta,
+  type VerdictName,
 } from "@/lib/api";
 
 function Row({ row }: { row: LedgerRow }) {
   const evidence = evidenceFor(row);
   return (
     <div
-      className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 border-t px-4 py-3 sm:grid-cols-[minmax(0,13rem)_7.5rem_minmax(0,1fr)_3rem] sm:items-center"
+      className="row-hover grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 border-t px-4 py-3 sm:grid-cols-[minmax(0,13rem)_7.5rem_minmax(0,1fr)_3rem] sm:items-center"
       style={{ borderColor: "var(--hairline)" }}
     >
       <span className="font-mono text-[13px]" style={{ color: "var(--ink)" }}>
@@ -61,9 +62,17 @@ function Row({ row }: { row: LedgerRow }) {
   );
 }
 
-function Group({ group }: { group: LedgerGroup }) {
+function Group({
+  group,
+  filter,
+}: {
+  group: LedgerGroup;
+  filter: VerdictName | null;
+}) {
+  const rows = filter ? group.rows.filter((row) => row.verdict === filter) : group.rows;
+  if (rows.length === 0) return null;
   return (
-    <section className="panel overflow-hidden">
+    <section className="panel lift overflow-hidden">
       <header className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3.5">
         <span className="font-mono text-[14px] font-medium" style={{ color: "var(--ink)" }}>
           {group.subject_id}
@@ -82,7 +91,7 @@ function Group({ group }: { group: LedgerGroup }) {
           <VerdictCounts counts={group.counts} compact />
         </span>
       </header>
-      {group.rows.map((row) => (
+      {rows.map((row) => (
         <Row key={`${row.subject_id}-${row.field}`} row={row} />
       ))}
     </section>
@@ -94,6 +103,9 @@ export default function LedgerScreen() {
   const [schema, setSchema] = useState<string>("supplier_delivery");
   const [ledger, setLedger] = useState<LedgerResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Clicking a count chip narrows the ledger to that verdict. Real filtering of
+  // data already on screen -- no request, nothing to wait for.
+  const [filter, setFilter] = useState<VerdictName | null>(null);
 
   useEffect(() => {
     getMeta()
@@ -110,6 +122,7 @@ export default function LedgerScreen() {
 
   useEffect(() => {
     setLedger(null);
+    setFilter(null);
     getLedger(schema)
       .then(setLedger)
       .catch((err) => setError(String(err)));
@@ -135,8 +148,14 @@ export default function LedgerScreen() {
         aside={
           ledger ? (
             <div className="flex flex-col items-start gap-2 sm:items-end">
-              <Label>across all subjects</Label>
-              <VerdictCounts counts={ledger.counts} />
+              <Label>
+                {filter ? "filtered — click again to clear" : "across all subjects"}
+              </Label>
+              <VerdictCounts
+                counts={ledger.counts}
+                selected={filter}
+                onSelect={setFilter}
+              />
             </div>
           ) : null
         }
@@ -152,9 +171,16 @@ export default function LedgerScreen() {
       {ledger ? (
         <div className="space-y-3 px-4 sm:px-6">
           {ledger.groups.map((group) => (
-            <Group key={group.subject_id} group={group} />
+            <Group key={group.subject_id} group={group} filter={filter} />
           ))}
         </div>
+      ) : null}
+
+      {ledger && filter && ledger.counts[filter] === 0 ? (
+        <Notice>
+          Nothing is {filter.toLowerCase().replace("_", " ")} in this pack right
+          now. That is a fact about the ledger, not an empty screen.
+        </Notice>
       ) : null}
 
       {ledger && ledger.groups.length === 0 ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { Header, Label, Notice, PageTitle, Shell } from "@/components/chrome";
 import { RuleTrace, VerdictBadge, verdictTint } from "@/components/verdict";
 import {
@@ -21,8 +21,21 @@ const SPEAKER_LABEL: Record<string, string> = {
 /** One line per turn, with the confirmed spans highlighted where they were
  *  actually said. The segments come from the API, which cut them against the
  *  adjudicator's own offsets — so what is highlighted is exactly what the
- *  verdict rests on, not a second search over the text. */
-function Transcript({ lines }: { lines: TranscriptLine[] }) {
+ *  verdict rests on, not a second search over the text.
+ *
+ *  Each highlight is a real button: the sentence and the verdict it produced
+ *  are two views of one fact, so the screen lets you move between them. */
+function Transcript({
+  lines,
+  active,
+  onHover,
+  onPick,
+}: {
+  lines: TranscriptLine[];
+  active: string | null;
+  onHover: (field: string | null) => void;
+  onPick: (field: string) => void;
+}) {
   return (
     <div className="space-y-2.5">
       {lines.map((line, index) => {
@@ -41,9 +54,20 @@ function Transcript({ lines }: { lines: TranscriptLine[] }) {
             >
               {line.segments.map((piece, pieceIndex) =>
                 piece.field ? (
-                  <mark className="quote" key={pieceIndex} title={piece.field}>
+                  <button
+                    type="button"
+                    key={pieceIndex}
+                    className="quote"
+                    data-active={active === piece.field}
+                    title={`Evidence for ${piece.field} — click to jump to its verdict`}
+                    onMouseEnter={() => onHover(piece.field)}
+                    onMouseLeave={() => onHover(null)}
+                    onFocus={() => onHover(piece.field)}
+                    onBlur={() => onHover(null)}
+                    onClick={() => onPick(piece.field!)}
+                  >
                     {piece.text}
-                  </mark>
+                  </button>
                 ) : (
                   <span key={pieceIndex}>{piece.text}</span>
                 ),
@@ -65,6 +89,9 @@ export default function CallDetailScreen({
   const [meta, setMeta] = useState<Meta | null>(null);
   const [detail, setDetail] = useState<CallDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [active, setActive] = useState<string | null>(null);
+  const [landed, setLanded] = useState<string | null>(null);
+  const cards = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
     getMeta().then(setMeta).catch(() => undefined);
@@ -72,6 +99,15 @@ export default function CallDetailScreen({
       .then(setDetail)
       .catch((err) => setError(String(err)));
   }, [id]);
+
+  /** Jump to the verdict a quoted sentence produced, and mark where you landed. */
+  const jumpTo = useCallback((field: string) => {
+    const card = cards.current[field];
+    if (!card) return;
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    setLanded(field);
+    window.setTimeout(() => setLanded((f) => (f === field ? null : f)), 800);
+  }, []);
 
   const settled = detail
     ? detail.counts.CONFIRMED + detail.counts.CONTRADICTED
@@ -98,7 +134,7 @@ export default function CallDetailScreen({
           detail ? (
             <Link
               href="/"
-              className="pill px-4 py-2 text-[13px]"
+              className="pill lift px-4 py-2 text-[13px]"
               style={{
                 background: "var(--surface-solid)",
                 color: "var(--ink-2)",
@@ -127,7 +163,12 @@ export default function CallDetailScreen({
               </span>
             </div>
 
-            <Transcript lines={detail.lines} />
+            <Transcript
+              lines={detail.lines}
+              active={active}
+              onHover={setActive}
+              onPick={jumpTo}
+            />
 
             <div
               className="mt-5 flex flex-wrap gap-x-4 gap-y-1 border-t pt-4 font-mono text-[11px]"
@@ -142,40 +183,55 @@ export default function CallDetailScreen({
           </section>
 
           <section className="space-y-3">
-            {detail.rows.map((row) => (
-              <article key={row.field} className="panel overflow-hidden">
-                <header
-                  className="flex flex-wrap items-center gap-3 px-5 py-3.5"
-                  style={{ background: verdictTint(row.verdict) }}
+            {detail.rows.map((row) => {
+              const linked = row.quote_start >= 0;
+              return (
+                <article
+                  key={row.field}
+                  ref={(node) => {
+                    cards.current[row.field] = node;
+                  }}
+                  className={`panel overflow-hidden ${landed === row.field ? "settled" : ""}`}
+                  style={{
+                    boxShadow:
+                      active === row.field ? "var(--shadow-lift)" : undefined,
+                  }}
+                  onMouseEnter={() => linked && setActive(row.field)}
+                  onMouseLeave={() => linked && setActive(null)}
                 >
-                  <span
-                    className="font-mono text-[13px] font-medium"
-                    style={{ color: "var(--ink)" }}
+                  <header
+                    className="flex flex-wrap items-center gap-3 px-5 py-3.5"
+                    style={{ background: verdictTint(row.verdict) }}
                   >
-                    {row.field}
-                  </span>
-                  <VerdictBadge verdict={row.verdict} size="sm" />
-                  <span
-                    className="ml-auto font-mono text-[13px]"
-                    style={{ color: row.value ? "var(--ink)" : "var(--ink-3)" }}
-                  >
-                    {row.value || "—"}
-                  </span>
-                </header>
-                <div className="px-3 py-3">
-                  <RuleTrace row={row} />
-                </div>
-                {row.verdict === "CONTRADICTED" ? (
-                  <p
-                    className="px-5 pb-4 text-[12px]"
-                    style={{ color: "var(--ink-2)" }}
-                  >
-                    Our record said{" "}
-                    <span className="font-mono">{row.known_value}</span>.
-                  </p>
-                ) : null}
-              </article>
-            ))}
+                    <span
+                      className="font-mono text-[13px] font-medium"
+                      style={{ color: "var(--ink)" }}
+                    >
+                      {row.field}
+                    </span>
+                    <VerdictBadge verdict={row.verdict} size="sm" />
+                    <span
+                      className="ml-auto font-mono text-[13px]"
+                      style={{ color: row.value ? "var(--ink)" : "var(--ink-3)" }}
+                    >
+                      {row.value || "—"}
+                    </span>
+                  </header>
+                  <div className="px-3 py-3">
+                    <RuleTrace row={row} />
+                  </div>
+                  {row.verdict === "CONTRADICTED" ? (
+                    <p
+                      className="px-5 pb-4 text-[12px]"
+                      style={{ color: "var(--ink-2)" }}
+                    >
+                      Our record said{" "}
+                      <span className="font-mono">{row.known_value}</span>.
+                    </p>
+                  ) : null}
+                </article>
+              );
+            })}
 
             {detail.rejected_spans.length ? (
               <article className="panel p-5">
@@ -193,7 +249,8 @@ export default function CallDetailScreen({
                       citing{" "}
                       <span className="font-mono">“{span.claimed_quote}”</span> —
                       {" "}
-                      {span.detail}.
+                      {span.detail}. There is nothing to highlight on the left,
+                      which is the point.
                     </p>
                   ))}
                 </div>

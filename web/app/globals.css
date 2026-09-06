@@ -64,7 +64,9 @@
   --noauthority-fg: #5636a6;
 
   --quote-bg: rgba(123, 92, 214, 0.13);
+  --quote-bg-strong: rgba(123, 92, 214, 0.26);
   --quote-line: rgba(123, 92, 214, 0.55);
+  --shadow-lift: 0 14px 40px rgba(90, 70, 140, 0.16);
 }
 
 :root[data-theme="dark"] {
@@ -105,7 +107,9 @@
   --noauthority-fg: #c4b5fd;
 
   --quote-bg: rgba(179, 156, 245, 0.2);
+  --quote-bg-strong: rgba(179, 156, 245, 0.36);
   --quote-line: rgba(179, 156, 245, 0.7);
+  --shadow-lift: 0 16px 44px rgba(0, 0, 0, 0.5);
 }
 
 html {
@@ -180,23 +184,96 @@ body::before {
 body,
 body::before,
 .panel,
+.quote,
+.lift,
+.row-hover,
 .panel-flat,
 .sunken,
 button,
 select,
 a,
 mark {
-  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-property: background-color, border-color, color, box-shadow, opacity,
+    transform;
   transition-duration: 200ms;
   transition-timing-function: ease-out;
 }
 
-mark.quote {
+/* ---------------------------------------------------------------------------
+   Interaction.
+
+   Everything here responds to something the user actually did -- a pointer, a
+   key, a click. There are no entrances, no skeletons and no progress that is
+   not real progress; a surface that animates while nothing is happening is
+   lying about state, which is the failure this whole product is about.
+--------------------------------------------------------------------------- */
+
+/* A quoted span is a link between the transcript and the verdict that used it,
+   so it behaves like one: focusable, hoverable, and it says which field. */
+.quote {
   background: var(--quote-bg);
+  border: 0;
   border-bottom: 1.5px solid var(--quote-line);
   border-radius: 3px;
   color: inherit;
+  cursor: pointer;
+  font: inherit;
   padding: 1px 2px;
+  text-align: left;
+}
+
+.quote:hover,
+.quote[data-active="true"] {
+  background: var(--quote-bg-strong);
+  border-bottom-color: var(--quote-line);
+  box-shadow: 0 0 0 2px var(--quote-bg-strong);
+}
+
+/* Raises on hover, settles on press. 1px, because a ledger row that leaps is
+   telling you something happened when nothing did. */
+.lift {
+  will-change: transform;
+}
+
+.lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lift);
+}
+
+.lift:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-float);
+}
+
+.row-hover:hover {
+  background: var(--surface-2);
+}
+
+/* One focus treatment for every interactive element, keyboard only. */
+:where(a, button, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-pill);
+}
+
+.quote:focus-visible {
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Fires when a card is jumped to from a transcript quote, so the eye lands on
+   the right one. Tied to a real navigation, and it plays once. */
+@keyframes settle {
+  from {
+    box-shadow: 0 0 0 3px var(--quote-line);
+  }
+  to {
+    box-shadow: var(--shadow-card);
+  }
+}
+
+.settled {
+  animation: settle 700ms ease-out;
 }
 
 .scroll-soft {
@@ -207,5 +284,12 @@ mark.quote {
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+
+  /* Colour still changes; movement does not. */
+  .lift:hover,
+  .lift:active {
+    transform: none;
   }
 }
