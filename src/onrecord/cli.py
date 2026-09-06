@@ -54,7 +54,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--demo", action="store_true", help="seed: load the demo subjects")
     parser.add_argument("--reset", action="store_true", help="delete the database before running")
     parser.add_argument("--host", default="127.0.0.1", help="serve: bind host")
-    parser.add_argument("--port", type=int, default=8787, help="serve: bind port")
+    parser.add_argument("--port", type=int, default=8799, help="serve: bind port")
     return parser
 
 

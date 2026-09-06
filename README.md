@@ -124,7 +124,7 @@ the CALL-E Python SDK (`calle-ai`) at runtime, and all of that is isolated in
 transcript, and the requeue.
 
 ```bash
-uv run onrecord serve            # API on :8787
+uv run onrecord serve            # API on :8799
 cd web && npm install && npm run dev
 ```
 
