@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import pytest
 
+from onrecord.paths import fixture_dir
 from onrecord.calle_client import (
     SPEAKER_AGENT,
     SPEAKER_CALLEE,
@@ -16,7 +16,7 @@ from onrecord.calle_client import (
     render_transcript,
 )
 
-FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures"
+FIXTURE_DIR = fixture_dir()
 
 
 def _payload(name: str) -> dict:

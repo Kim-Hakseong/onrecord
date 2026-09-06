@@ -12,6 +12,7 @@ from . import fixtures as fixture_lib
 from .calle_client import CalleClient, CalleNotConfigured
 from .constants import CALL_BUDGET, LIVE_CALL_FLOOR
 from .pipeline import MODE_LIVE, MODE_REPLAY, CallBudgetExhausted, LedgerDelta, run
+from .paths import schema_dir
 from .planner import Contact, plan_call
 from .schema import load_schema
 from .seed import SUBJECTS, seed_store, subject as seed_subject
@@ -26,7 +27,7 @@ BADGE = {
     Verdict.NO_AUTHORITY.value: "\033[31mNO_AUTHORITY\033[0m",
 }
 
-DEFAULT_SCHEMA = Path("schemas/supplier_delivery.yaml")
+DEFAULT_SCHEMA = schema_dir() / "supplier_delivery.yaml"
 REPLAY_DB = Path("data/replay.db")
 
 

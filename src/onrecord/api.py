@@ -26,6 +26,7 @@ from .constants import (
     VERDICT_COUNT,
 )
 from .explain import explain_stored_row, sort_key, verdict_counts
+from .paths import schema_dir
 from .pipeline import MODE_LIVE, CallBudgetExhausted, run
 from .planner import plan_call
 from .promote import MAX_ATTEMPTS
@@ -34,7 +35,7 @@ from .seed import seed_store, subject as seed_subject
 from .spanner import default_spanner
 from .store import DEFAULT_DB_PATH, Store
 
-SCHEMA_DIR = Path("schemas")
+SCHEMA_DIR = schema_dir()
 
 
 class RunRequest(BaseModel):

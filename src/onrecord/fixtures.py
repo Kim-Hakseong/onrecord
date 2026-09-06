@@ -14,9 +14,8 @@ from pathlib import Path
 from typing import Any
 
 from .calle_client import CallOutcome, outcome_from_payload
+from .paths import fixture_dir
 from .spanner import RecordedSpanner
-
-FIXTURE_DIR = Path(__file__).resolve().parents[2] / "fixtures"
 
 
 @dataclass(frozen=True)
@@ -53,13 +52,13 @@ def load_fixture(path: str | Path) -> Fixture:
     )
 
 
-def load_all(directory: str | Path = FIXTURE_DIR) -> list[Fixture]:
-    directory = Path(directory)
+def load_all(directory: str | Path | None = None) -> list[Fixture]:
+    directory = Path(directory) if directory else fixture_dir()
     return [load_fixture(p) for p in sorted(directory.glob("*.json"))]
 
 
-def by_name(name: str, directory: str | Path = FIXTURE_DIR) -> Fixture:
+def by_name(name: str, directory: str | Path | None = None) -> Fixture:
     for fixture in load_all(directory):
         if fixture.name == name:
             return fixture
-    raise KeyError(f"no fixture named {name!r} in {directory}")
+    raise KeyError(f"no fixture named {name!r} in {directory or fixture_dir()}")

@@ -12,12 +12,12 @@ from onrecord.api import create_app
 from onrecord.constants import RULE_COUNT, VERDICT_COUNT
 from onrecord.fixtures import load_all
 from onrecord.pipeline import MODE_REPLAY, run
+from onrecord.paths import schema_dir
 from onrecord.schema import load_schema
 from onrecord.seed import seed_store, subject
 from onrecord.store import Store
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_DIR = REPO_ROOT / "schemas"
+SCHEMA_DIR = schema_dir()
 
 
 @pytest.fixture

@@ -23,6 +23,7 @@ from . import fixtures as fixture_lib
 from .calle_client import CalleNotConfigured
 from .constants import CALL_BUDGET, LIVE_CALL_FLOOR, TAGLINE
 from .explain import explain_row, explain_stored_row, sort_key, verdict_counts
+from .paths import schema_dir
 from .pipeline import MODE_LIVE, MODE_REPLAY, CallBudgetExhausted, run
 from .planner import plan_call
 from .schema import load_schema
@@ -30,7 +31,7 @@ from .seed import SUBJECTS, seed_store, subject as seed_subject
 from .spanner import default_spanner
 from .store import DEFAULT_DB_PATH, Store
 
-SCHEMA_DIR = Path("schemas")
+SCHEMA_DIR = schema_dir()
 
 server = MCPServer(
     name="onrecord",

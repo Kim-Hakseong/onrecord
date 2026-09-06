@@ -25,6 +25,19 @@ plugins/onrecord/
 
 The repo's plugin template asks for `README.md`, a manifest-or-config file, and `examples/`.
 
+Build it with:
+
+```bash
+uv run python scripts/build_plugin.py ../awesome-phone-call-agents
+```
+
+The script copies the schemas and recorded calls that the tests already run against, rather
+than maintaining a second hand-edited copy — so the examples in the PR cannot drift from the
+ones under test. Verified: the emitted tree runs `onrecord --replay --schema
+examples/supplier_delivery.yaml` and its own 86-test suite from inside `plugins/onrecord/`,
+with no credentials. (`test_doc_consistency.py` is left out; it checks this repo's README and
+`docs/`, neither of which travels with the plugin.)
+
 ## Repo requirements to satisfy before opening the PR
 
 - Setup, usage, side-effect and cancellation notes in the plugin README. **Side effects

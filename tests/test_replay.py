@@ -13,18 +13,19 @@ import pytest
 
 from onrecord.fixtures import load_all
 from onrecord.pipeline import MODE_REPLAY, run
+from onrecord.paths import schema_dir
 from onrecord.schema import load_schema
 from onrecord.seed import seed_store, subject
 from onrecord.store import Store
 from onrecord.verdict import Verdict
 
-REPO_ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
+SCHEMA_DIR = schema_dir()
 REFERENCE_DATE = _dt.date(2026, 9, 1)
 FIXTURES = load_all()
 
 
 def _schema(name: str):
-    return load_schema(REPO_ROOT / "schemas" / f"{name}.yaml")
+    return load_schema(SCHEMA_DIR / f"{name}.yaml")
 
 
 def _replay(fixture, tmp_path):
