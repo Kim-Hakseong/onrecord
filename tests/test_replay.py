@@ -107,3 +107,42 @@ def _expected(fixture) -> dict[str, str]:
     import json
 
     return json.loads(fixture.path.read_text(encoding="utf-8"))["meta"]["expected"]
+
+
+def test_the_seeded_corpus_leaves_all_four_verdicts_standing(tmp_path):
+    """Replaying the whole corpus in order must end with every verdict visible.
+
+    The ledger shows the latest row per field, so a later call can supersede an
+    earlier verdict -- correct behaviour, but it once left NO_AUTHORITY at zero
+    across the whole supplier pack because the voicemail attempt landed after
+    the stand-in call. The fixtures are ordered so that does not happen, and
+    this is the test that keeps them that way.
+    """
+    from onrecord.explain import verdict_counts
+    from onrecord.store import Store
+
+    supplier = [f for f in FIXTURES if f.schema_name == "supplier_delivery"]
+    with Store(tmp_path / "corpus.sqlite") as store:
+        seed_store(store)
+        for fixture in supplier:
+            entry = subject(fixture.subject_id)
+            run(
+                _schema(fixture.schema_name),
+                entry.contact,
+                subject_id=fixture.subject_id,
+                known_values=entry.known_values,
+                store=store,
+                mode=MODE_REPLAY,
+                outcome=fixture.outcome,
+                spanner=fixture.spanner,
+                reference_date=REFERENCE_DATE,
+            )
+        current = [
+            row
+            for sub in {f.subject_id for f in supplier}
+            for row in store.current_rows(sub)
+        ]
+
+    counts = verdict_counts(current)
+    for verdict, count in counts.items():
+        assert count > 0, f"{verdict} is not visible anywhere in the ledger: {counts}"

@@ -8,7 +8,7 @@
       "quantity_committed": "UNRESOLVED",
       "partial_shipment_ok": "UNRESOLVED"
     },
-    "note": "Nobody picked up. The call still produces ledger rows and requeue entries -- a call that reached no one is a state, not an absence of one."
+    "note": "First attempt on PO-1043: nobody picked up. The call still produces ledger rows and requeue entries -- a call that reached no one is a state, not an absence of one."
   },
   "call": {
     "id": "call_onrecord_0004",

@@ -36,7 +36,7 @@ def test_a_call_task_flattens_into_one_outcome():
 
 
 def test_an_unanswered_call_is_still_a_well_formed_outcome():
-    outcome = outcome_from_payload(_payload("04_supplier_voicemail.json"))
+    outcome = outcome_from_payload(_payload("03_supplier_voicemail.json"))
     assert outcome.end_reason == "no_answer"
     assert outcome.reached_someone is False
     assert outcome.structured_result == {}
@@ -50,7 +50,7 @@ def test_a_payload_missing_everything_does_not_raise():
 
 
 def test_unknown_speakers_are_labelled_not_dropped():
-    turns = outcome_from_payload(_payload("04_supplier_voicemail.json")).turns
+    turns = outcome_from_payload(_payload("03_supplier_voicemail.json")).turns
     assert turns[0]["speaker"] == "unknown"
     assert "지금은 전화를 받을 수 없습니다" in render_transcript(turns)
 

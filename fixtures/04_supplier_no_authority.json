@@ -9,7 +9,7 @@
       "partial_shipment_ok": "UNRESOLVED",
       "blocking_reason": "CONFIRMED"
     },
-    "note": "Re-enacted stand-in answer. The assistant gives a clear date, and it is still not a commitment -- but the schema does let an assistant report the blocking reason, so that field settles."
+    "note": "Re-enacted stand-in answer, on the second attempt after the voicemail. The assistant gives a clear date, and it is still not a commitment -- but the schema does let an assistant report the blocking reason, so that field settles. This is the call that leaves NO_AUTHORITY standing as PO-1043's current state."
   },
   "call": {
     "id": "call_onrecord_0003",
