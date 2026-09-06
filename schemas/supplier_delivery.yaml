@@ -1,0 +1,63 @@
+name: supplier_delivery
+title: Supplier delivery confirmation
+subject_label: purchase order
+locale: ko-KR
+
+# Roles the caller may encounter. Authority is checked against this vocabulary;
+# anyone who cannot be placed in it answers as `unknown` and cannot commit.
+roles:
+  - sales_rep
+  - account_manager
+  - production_manager
+  - assistant
+  - unknown
+
+call_opening: >-
+  You are calling the supplier on behalf of the buyer's purchasing team about an
+  open purchase order. Be brief and polite. First establish who you are speaking
+  with and whether they can commit to shipping dates on this order.
+
+known_value_labels:
+  promised_ship_date: date currently recorded in the buyer's ERP
+
+fields:
+  - name: promised_ship_date
+    type: date
+    required: true
+    authority: [sales_rep, account_manager, production_manager]
+    question_hint: >-
+      Ask for the date the order will actually leave their warehouse. A calendar
+      date is required; "soon" or "probably next week" is not an answer.
+    description: >-
+      The date the supplier commits to shipping this order.
+
+  - name: quantity_committed
+    type: int
+    required: true
+    authority: [sales_rep, account_manager, production_manager]
+    question_hint: >-
+      Ask how many units will ship on that date, in case it is a partial run.
+    description: Number of units the supplier commits to shipping on that date.
+
+  - name: partial_shipment_ok
+    type: bool
+    required: false
+    authority: [sales_rep, account_manager, production_manager]
+    question_hint: >-
+      Ask whether they can send whatever is ready first and the remainder later.
+    description: Whether the supplier can split the order into a partial shipment.
+
+  - name: blocking_reason
+    type: enum
+    required: false
+    values:
+      - material_shortage
+      - production_delay
+      - logistics
+      - quality_hold
+      - none
+      - other
+    authority: [sales_rep, account_manager, production_manager, assistant]
+    question_hint: >-
+      If the date slipped, ask what is holding it up.
+    description: What is preventing the order from shipping on the original date.

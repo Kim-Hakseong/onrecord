@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "scenario": "supplier_no_authority",
+    "schema": "supplier_delivery",
+    "subject_id": "PO-1043",
+    "expected": {
+      "promised_ship_date": "NO_AUTHORITY",
+      "quantity_committed": "UNRESOLVED",
+      "partial_shipment_ok": "UNRESOLVED",
+      "blocking_reason": "CONFIRMED"
+    },
+    "note": "Re-enacted stand-in answer. The assistant gives a clear date, and it is still not a commitment -- but the schema does let an assistant report the blocking reason, so that field settles."
+  },
+  "call": {
+    "id": "call_onrecord_0003",
+    "object": "call_task",
+    "status": "completed",
+    "task": "Confirm the ship date for purchase order PO-1043.",
+    "structured_result": {
+      "promised_ship_date": "2026-09-25",
+      "blocking_reason": "production_delay",
+      "respondent_role": "assistant"
+    },
+    "recipients": [
+      {
+        "id": "rcp_0003",
+        "phones": ["+821000001043"],
+        "locale": "ko-KR",
+        "region": "KR",
+        "status": "completed",
+        "structured_result": null,
+        "summary": "Assistant answered; the account owner was out.",
+        "attempts": [
+          {
+            "id": "att_0003",
+            "phone": "+821000001043",
+            "status": "completed",
+            "started_at": "2026-09-09T05:30:00+00:00",
+            "completed_at": "2026-09-09T05:30:40+00:00",
+            "summary": "Stand-in answered.",
+            "provider_call_id": "prov_0003",
+            "failure_code": null,
+            "failure_message": null,
+            "transcript_turns": [
+              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 발주번호 PO-1043 출고 일정 확인차 연락드렸습니다. 담당자분 계실까요?"},
+              {"offset_seconds": 7, "speaker": "user", "text": "저는 사무 보조입니다. 담당자분은 오늘 외근 나가셨어요."},
+              {"offset_seconds": 14, "speaker": "bot", "text": "혹시 출고 예정일을 알고 계실까요?"},
+              {"offset_seconds": 18, "speaker": "user", "text": "9월 25일에 출고된다고 적혀 있네요."},
+              {"offset_seconds": 23, "speaker": "bot", "text": "일정이 밀린 이유도 기록되어 있나요?"},
+              {"offset_seconds": 28, "speaker": "user", "text": "생산 라인 지연 때문이라고 되어 있습니다."},
+              {"offset_seconds": 34, "speaker": "bot", "text": "감사합니다. 담당자분께 다시 연락드리겠습니다."},
+              {"offset_seconds": 38, "speaker": "user", "text": "네, 그렇게 해주세요."}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "spans": {
+    "respondent_role": "assistant",
+    "respondent_quote": "저는 사무 보조입니다.",
+    "fields": [
+      {"name": "promised_ship_date", "value": "2026-09-25", "quote": "9월 25일에 출고된다고 적혀 있네요."},
+      {"name": "quantity_committed", "value": "unknown", "quote": ""},
+      {"name": "blocking_reason", "value": "production_delay", "quote": "생산 라인 지연 때문이라고 되어 있습니다."}
+    ]
+  }
+}

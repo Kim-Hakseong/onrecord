@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "scenario": "reference_check_split",
+    "schema": "reference_check",
+    "subject_id": "CAND-2291",
+    "expected": {
+      "employment_end_date": "CONFIRMED",
+      "final_title": "CONFIRMED",
+      "eligible_for_rehire": "NO_AUTHORITY",
+      "departure_reason": "CONFIRMED"
+    },
+    "note": "Second domain pack, same adjudicator, zero code changes. The former manager can speak to dates and titles; only HR may answer the rehire question, so that one field lands on NO_AUTHORITY while the rest settle."
+  },
+  "call": {
+    "id": "call_onrecord_0007",
+    "object": "call_task",
+    "status": "completed",
+    "task": "Reference check for candidate CAND-2291.",
+    "structured_result": {
+      "employment_end_date": "2026-03-31",
+      "final_title": "선임 연구원",
+      "eligible_for_rehire": "yes",
+      "departure_reason": "resigned",
+      "respondent_role": "direct_manager"
+    },
+    "recipients": [
+      {
+        "id": "rcp_0007",
+        "phones": ["+821000002291"],
+        "locale": "ko-KR",
+        "region": "KR",
+        "status": "completed",
+        "structured_result": null,
+        "summary": "Former manager confirmed dates and title.",
+        "attempts": [
+          {
+            "id": "att_0007",
+            "phone": "+821000002291",
+            "status": "completed",
+            "started_at": "2026-09-11T07:40:00+00:00",
+            "completed_at": "2026-09-11T07:40:48+00:00",
+            "summary": "Rehire question deferred to HR.",
+            "provider_call_id": "prov_0007",
+            "failure_code": null,
+            "failure_message": null,
+            "transcript_turns": [
+              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 채용 절차 관련 평판 조회 차 연락드렸습니다. 통화 괜찮으실까요?"},
+              {"offset_seconds": 7, "speaker": "user", "text": "네, 제가 직속 팀장이었습니다."},
+              {"offset_seconds": 12, "speaker": "bot", "text": "마지막 근무일이 언제였는지 알려주시겠습니까?"},
+              {"offset_seconds": 17, "speaker": "user", "text": "2026년 3월 31일까지 근무했습니다."},
+              {"offset_seconds": 23, "speaker": "bot", "text": "퇴사 시점의 직함은 무엇이었나요?"},
+              {"offset_seconds": 27, "speaker": "user", "text": "직함은 선임 연구원이었습니다."},
+              {"offset_seconds": 32, "speaker": "bot", "text": "재입사 가능 여부도 확인 가능할까요?"},
+              {"offset_seconds": 37, "speaker": "user", "text": "네, 다시 뽑아도 괜찮습니다."},
+              {"offset_seconds": 44, "speaker": "bot", "text": "퇴사 사유는 어떻게 기록되어 있나요?"},
+              {"offset_seconds": 48, "speaker": "user", "text": "본인 사정으로 사직했습니다."}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "spans": {
+    "respondent_role": "direct_manager",
+    "respondent_quote": "네, 제가 직속 팀장이었습니다.",
+    "fields": [
+      {"name": "employment_end_date", "value": "2026-03-31", "quote": "2026년 3월 31일까지 근무했습니다."},
+      {"name": "final_title", "value": "선임 연구원", "quote": "직함은 선임 연구원이었습니다."},
+      {"name": "eligible_for_rehire", "value": "네", "quote": "네, 다시 뽑아도 괜찮습니다."},
+      {"name": "departure_reason", "value": "resigned", "quote": "본인 사정으로 사직했습니다."}
+    ]
+  }
+}

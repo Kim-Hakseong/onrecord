@@ -1,0 +1,57 @@
+name: reference_check
+title: Employment reference check
+subject_label: candidate
+locale: ko-KR
+
+roles:
+  - direct_manager
+  - hr_representative
+  - former_colleague
+  - unknown
+
+call_opening: >-
+  You are calling a listed reference for a job candidate, on behalf of the
+  hiring team. Be brief and professional. First establish the reference's
+  relationship to the candidate before asking anything about employment terms.
+
+known_value_labels:
+  employment_end_date: end date the candidate stated on their application
+  final_title: job title the candidate stated on their application
+
+fields:
+  - name: employment_end_date
+    type: date
+    required: true
+    authority: [direct_manager, hr_representative]
+    question_hint: >-
+      Ask for the candidate's last working day. A calendar date is required.
+    description: The date the candidate's employment ended.
+
+  - name: final_title
+    type: text
+    required: true
+    authority: [direct_manager, hr_representative]
+    question_hint: Ask for the exact job title the candidate held at departure.
+    description: The candidate's job title on their last day.
+
+  - name: eligible_for_rehire
+    type: bool
+    required: false
+    authority: [hr_representative]
+    question_hint: >-
+      Ask whether the company would consider rehiring the candidate. Only HR can
+      answer this.
+    description: Whether the former employer would rehire the candidate.
+
+  - name: departure_reason
+    type: enum
+    required: false
+    values:
+      - resigned
+      - contract_ended
+      - laid_off
+      - terminated
+      - other
+    authority: [direct_manager, hr_representative]
+    question_hint: Ask how the employment ended.
+    description: The recorded reason the employment ended.

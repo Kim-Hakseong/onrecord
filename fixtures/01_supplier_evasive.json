@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "scenario": "supplier_evasive",
+    "schema": "supplier_delivery",
+    "subject_id": "PO-1041",
+    "expected": {
+      "promised_ship_date": "UNRESOLVED",
+      "quantity_committed": "UNRESOLVED",
+      "partial_shipment_ok": "UNRESOLVED",
+      "blocking_reason": "CONFIRMED"
+    },
+    "note": "Re-enacted call. The counterpart is the builder using a second number; the transcript is scripted, not a recording of a real supplier."
+  },
+  "call": {
+    "id": "call_onrecord_0001",
+    "object": "call_task",
+    "status": "completed",
+    "task": "Confirm the ship date for purchase order PO-1041.",
+    "structured_result": {
+      "promised_ship_date": "unknown",
+      "quantity_committed": "unknown",
+      "partial_shipment_ok": "unknown",
+      "blocking_reason": "material_shortage",
+      "respondent_role": "sales_rep"
+    },
+    "recipients": [
+      {
+        "id": "rcp_0001",
+        "phones": ["+821000001041"],
+        "locale": "ko-KR",
+        "region": "KR",
+        "status": "completed",
+        "structured_result": null,
+        "summary": "Supplier could not commit to a ship date and will call back.",
+        "attempts": [
+          {
+            "id": "att_0001",
+            "phone": "+821000001041",
+            "status": "completed",
+            "started_at": "2026-09-08T02:11:04+00:00",
+            "completed_at": "2026-09-08T02:12:01+00:00",
+            "summary": "No date committed.",
+            "provider_call_id": "prov_0001",
+            "failure_code": null,
+            "failure_message": null,
+            "transcript_turns": [
+              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 대한정밀 구매팀 대신 연락드렸습니다. 발주번호 PO-1041 건으로 통화 가능하실까요?"},
+              {"offset_seconds": 6, "speaker": "user", "text": "네, 영업 담당 김민수입니다. 말씀하세요."},
+              {"offset_seconds": 11, "speaker": "bot", "text": "이 주문 출고 예정일을 확인하고 싶습니다. 정확한 날짜를 주실 수 있을까요?"},
+              {"offset_seconds": 18, "speaker": "user", "text": "음... 아마 이번 달 안에는 나갈 것 같은데요, 확인해보고 다시 연락드릴게요."},
+              {"offset_seconds": 27, "speaker": "bot", "text": "혹시 지금 일정이 늦어지는 이유가 있을까요?"},
+              {"offset_seconds": 32, "speaker": "user", "text": "자재 수급이 늦어져서 그렇습니다."},
+              {"offset_seconds": 38, "speaker": "bot", "text": "알겠습니다. 확인되시면 연락 부탁드립니다. 감사합니다."},
+              {"offset_seconds": 44, "speaker": "user", "text": "네, 알겠습니다."}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "spans": {
+    "respondent_role": "sales_rep",
+    "respondent_quote": "네, 영업 담당 김민수입니다.",
+    "fields": [
+      {
+        "name": "blocking_reason",
+        "value": "material_shortage",
+        "quote": "자재 수급이 늦어져서 그렇습니다."
+      }
+    ]
+  }
+}

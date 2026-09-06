@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "scenario": "supplier_followup_confirmed",
+    "schema": "supplier_delivery",
+    "subject_id": "PO-1041",
+    "expected": {
+      "promised_ship_date": "CONFIRMED",
+      "quantity_committed": "CONFIRMED",
+      "partial_shipment_ok": "CONFIRMED"
+    },
+    "note": "Second attempt on PO-1041. blocking_reason was settled by the first call and is absent from this call's goal, which is why the call is shorter."
+  },
+  "call": {
+    "id": "call_onrecord_0002",
+    "object": "call_task",
+    "status": "completed",
+    "task": "Follow up on PO-1041: ship date, quantity, partial shipment.",
+    "structured_result": {
+      "promised_ship_date": "2026-09-24",
+      "quantity_committed": "500",
+      "partial_shipment_ok": "yes",
+      "respondent_role": "sales_rep"
+    },
+    "recipients": [
+      {
+        "id": "rcp_0002",
+        "phones": ["+821000001041"],
+        "locale": "ko-KR",
+        "region": "KR",
+        "status": "completed",
+        "structured_result": null,
+        "summary": "Ship date committed for September 24th.",
+        "attempts": [
+          {
+            "id": "att_0002",
+            "phone": "+821000001041",
+            "status": "completed",
+            "started_at": "2026-09-10T01:04:00+00:00",
+            "completed_at": "2026-09-10T01:04:31+00:00",
+            "summary": "Date, quantity and partial shipment all answered.",
+            "provider_call_id": "prov_0002",
+            "failure_code": null,
+            "failure_message": null,
+            "transcript_turns": [
+              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, PO-1041 출고일 확인차 다시 연락드렸습니다."},
+              {"offset_seconds": 5, "speaker": "user", "text": "네, 영업 담당 김민수입니다. 확인했습니다."},
+              {"offset_seconds": 10, "speaker": "bot", "text": "출고 가능한 날짜를 알려주시겠습니까?"},
+              {"offset_seconds": 14, "speaker": "user", "text": "9월 24일에 출고됩니다."},
+              {"offset_seconds": 18, "speaker": "bot", "text": "그 날짜에 몇 개가 나가나요?"},
+              {"offset_seconds": 22, "speaker": "user", "text": "500개 전량 나갑니다."},
+              {"offset_seconds": 25, "speaker": "bot", "text": "일부만 먼저 보내는 것도 가능할까요?"},
+              {"offset_seconds": 28, "speaker": "user", "text": "네, 가능합니다."},
+              {"offset_seconds": 31, "speaker": "bot", "text": "감사합니다. 좋은 하루 보내세요."}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "spans": {
+    "respondent_role": "sales_rep",
+    "respondent_quote": "네, 영업 담당 김민수입니다.",
+    "fields": [
+      {"name": "promised_ship_date", "value": "2026-09-24", "quote": "9월 24일에 출고됩니다."},
+      {"name": "quantity_committed", "value": "500", "quote": "500개 전량 나갑니다."},
+      {"name": "partial_shipment_ok", "value": "네", "quote": "네, 가능합니다."}
+    ]
+  }
+}

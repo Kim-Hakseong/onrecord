@@ -1,0 +1,17 @@
+data/
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.next/
+*.db
+.DS_Store
+.env
+
+# Internal planning documents — never shipped to the public repo.
+PRD.md
+CLAUDE.md
+PROMPT_ralph.md
+LOG.md
+SUBMISSION.md
+Design.md

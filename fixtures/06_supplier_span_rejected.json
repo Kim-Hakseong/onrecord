@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "scenario": "supplier_span_rejected",
+    "schema": "supplier_delivery",
+    "subject_id": "PO-1044",
+    "expected": {
+      "promised_ship_date": "UNRESOLVED",
+      "quantity_committed": "UNRESOLVED",
+      "partial_shipment_ok": "UNRESOLVED",
+      "blocking_reason": "UNRESOLVED"
+    },
+    "note": "Both extractors offered a date and neither could show where it came from. The span pointer paraphrased the sentence instead of copying it, and CALL-E's own structured_result carries no quote at all. Both are discarded and the field stays open. This is the case the whole design exists for."
+  },
+  "call": {
+    "id": "call_onrecord_0006",
+    "object": "call_task",
+    "status": "completed",
+    "task": "Confirm the ship date for purchase order PO-1044.",
+    "structured_result": {
+      "promised_ship_date": "2026-10-15",
+      "respondent_role": "sales_rep"
+    },
+    "recipients": [
+      {
+        "id": "rcp_0006",
+        "phones": ["+821000001044"],
+        "locale": "ko-KR",
+        "region": "KR",
+        "status": "completed",
+        "structured_result": null,
+        "summary": "Supplier discussed timing loosely.",
+        "attempts": [
+          {
+            "id": "att_0006",
+            "phone": "+821000001044",
+            "status": "completed",
+            "started_at": "2026-09-11T00:15:00+00:00",
+            "completed_at": "2026-09-11T00:15:35+00:00",
+            "summary": "No firm commitment.",
+            "provider_call_id": "prov_0006",
+            "failure_code": null,
+            "failure_message": null,
+            "transcript_turns": [
+              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 발주번호 PO-1044 출고 일정 확인차 연락드렸습니다."},
+              {"offset_seconds": 6, "speaker": "user", "text": "네, 영업 담당 최영한입니다."},
+              {"offset_seconds": 11, "speaker": "bot", "text": "출고 날짜를 확정해 주실 수 있을까요?"},
+              {"offset_seconds": 16, "speaker": "user", "text": "다음 달 중순쯤이면 아마 될 것 같습니다. 확정은 아니에요."},
+              {"offset_seconds": 24, "speaker": "bot", "text": "확정되면 알려주시겠습니까?"},
+              {"offset_seconds": 28, "speaker": "user", "text": "네, 정해지면 연락드리겠습니다."}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "spans": {
+    "respondent_role": "sales_rep",
+    "respondent_quote": "네, 영업 담당 최영한입니다.",
+    "fields": [
+      {
+        "name": "promised_ship_date",
+        "value": "2026-10-15",
+        "quote": "10월 15일에 출고하겠습니다."
+      }
+    ]
+  }
+}
