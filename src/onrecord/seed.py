@@ -60,6 +60,15 @@ SUBJECTS: tuple[Subject, ...] = (
         known_values={"promised_ship_date": "2026-10-01"},
     ),
     Subject(
+        id="PO-1045",
+        schema_name="supplier_delivery",
+        label="Gearbox casing, 500 units",
+        contact=Contact(
+            phone="+821000001045", name="Kim Min-su", org="Hanseong Precision", role_hint="sales_rep"
+        ),
+        known_values={"promised_ship_date": "2026-09-24"},
+    ),
+    Subject(
         id="CAND-2291",
         schema_name="reference_check",
         label="Senior researcher candidate",
@@ -68,7 +77,7 @@ SUBJECTS: tuple[Subject, ...] = (
         ),
         known_values={
             "employment_end_date": "2026-03-31",
-            "final_title": "선임 연구원",
+            "final_title": "Senior Researcher",
         },
     ),
 )

@@ -13,9 +13,9 @@ from onrecord.valuetypes import normalize
 from onrecord.verdict import LedgerRow, Reason, Verdict
 
 TURNS = [
-    {"speaker": "agent", "text": "출고 날짜를 알려주시겠습니까?", "offset_seconds": 0},
-    {"speaker": "callee", "text": "9월 24일에 출고됩니다.", "offset_seconds": 14},
-    {"speaker": "agent", "text": "감사합니다.", "offset_seconds": 20},
+    {"speaker": "agent", "text": "What date can you ship?", "offset_seconds": 0},
+    {"speaker": "callee", "text": "It ships on September 24th.", "offset_seconds": 14},
+    {"speaker": "agent", "text": "Thank you.", "offset_seconds": 20},
 ]
 TRANSCRIPT = normalize("\n".join(f"{t['speaker']}: {t['text']}" for t in TURNS))
 
@@ -63,7 +63,7 @@ class TestTranscriptLines:
     def test_the_speaker_per_line_structure_is_recovered(self):
         lines = transcript_lines(TRANSCRIPT, TURNS)
         assert [line["speaker"] for line in lines] == ["agent", "callee", "agent"]
-        assert lines[1]["text"] == "9월 24일에 출고됩니다."
+        assert lines[1]["text"] == "It ships on September 24th."
         assert all(line["start"] >= 0 for line in lines)
 
     def test_recovered_offsets_point_at_the_same_text(self):
@@ -74,7 +74,7 @@ class TestTranscriptLines:
             assert line["text"] in rendered
 
     def test_a_quote_highlights_inside_its_own_turn_only(self):
-        quote = "9월 24일에 출고됩니다."
+        quote = "It ships on September 24th."
         start = TRANSCRIPT.find(quote)
         lines = transcript_lines(
             TRANSCRIPT, TURNS, [(start, start + len(quote), "promised_ship_date")]
@@ -91,14 +91,14 @@ class TestTranscriptLines:
         assert piece["text"] == quote
 
     def test_segments_reassemble_into_the_turn_verbatim(self):
-        quote = "9월 24일"
+        quote = "September 24th"
         start = TRANSCRIPT.find(quote)
         lines = transcript_lines(TRANSCRIPT, TURNS, [(start, start + len(quote), "f")])
         for line in lines:
             assert "".join(piece["text"] for piece in line["segments"]) == line["text"]
 
     def test_a_partial_quote_splits_the_turn_into_three(self):
-        quote = "9월 24일"
+        quote = "September 24th"
         start = TRANSCRIPT.find(quote)
         lines = transcript_lines(TRANSCRIPT, TURNS, [(start, start + len(quote), "f")])
         segments = lines[1]["segments"]
@@ -107,9 +107,9 @@ class TestTranscriptLines:
         ] == [True, False]
 
     def test_an_unlocatable_turn_still_renders(self):
-        lines = transcript_lines(TRANSCRIPT, [{"speaker": "callee", "text": "없는 말"}])
+        lines = transcript_lines(TRANSCRIPT, [{"speaker": "callee", "text": "a line that is not there"}])
         assert lines[0]["start"] == -1
-        assert lines[0]["segments"][0]["text"] == "없는 말"
+        assert lines[0]["segments"][0]["text"] == "a line that is not there"
 
     def test_no_turns_is_not_an_error(self):
         assert transcript_lines("", []) == []

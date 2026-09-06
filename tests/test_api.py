@@ -108,7 +108,7 @@ def test_a_rejected_span_is_surfaced_not_hidden(client):
     body = client.get(f"/api/calls/{calls[0]['id']}").json()
     assert body["rejected_spans"], "the discarded claim must be visible in the API"
     rejected = body["rejected_spans"][0]
-    assert rejected["claimed_quote"] == "10월 15일에 출고하겠습니다."
+    assert rejected["claimed_quote"] == "We'll ship on October 15th."
     assert rejected["claimed_quote"] not in body["call"]["transcript"]
 
 

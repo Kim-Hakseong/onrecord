@@ -12,12 +12,16 @@ written script. They are not real suppliers. Nothing in the video implies otherw
 README says the same thing in its own words. The recorded transcripts in `fixtures/` are
 scripted as well, and each one says so in its `note` field.
 
+**The calls are in English** so a reviewer can check the highlighted quote against the
+transcript themselves — the demo's central claim is unverifiable otherwise. One recorded call
+is in Korean on purpose; if it appears on screen at all, the narration says why.
+
 ## Cue sheet
 
 | Time | Screen | Action | Narration |
 |---|---|---|---|
 | 0:00 | Call Detail, PO-1041 attempt 1 | play the recorded call | "This call failed." |
-| 0:12 | transcript: "확인해보고 다시 연락드릴게요" | none | "A purchasing team hits this ten times a day. The agent got through. Nothing was settled." |
+| 0:12 | transcript: "let me check and get back to you" | none | "A purchasing team hits this ten times a day. The agent got through. Nothing was settled." |
 | 0:18 | Ledger, `promised_ship_date` UNRESOLVED in yellow | none | "Existing agents log this as 'call completed'. We log what did not get settled — and there are four states, not two." |
 | 0:25 | Requeue, a card appears | none | — |
 | 0:30 | `schemas/supplier_delivery.yaml` in the editor | scroll | "You declare the fields before dialing. Type, and who is allowed to commit to them." |
@@ -31,7 +35,7 @@ scripted as well, and each one says so in its `note` field.
 | 2:20 | PO-1042, `CONTRADICTED` | none | "This is not the date our system believed. The ERP said the twentieth." |
 | 2:30 | terminal, `uv run pytest -q` | run | — |
 | 2:40 | terminal, `uv run onrecord --replay` with no env vars | run | "Reproducible with no CALL-E credentials." |
-| 2:50 | README "What does not work yet" | scroll | "IVR trees, transfers, languages other than Korean, and the fact that these counterparts are re-enacted. Written down, not hidden." |
+| 2:50 | README "What does not work yet" | scroll | "IVR trees, transfers, only two languages parsed, and the fact that these counterparts are re-enacted. Written down, not hidden." |
 | 2:55 | the pull request page | none | "Submitted as a workflow plugin." |
 
 ## Recording setup

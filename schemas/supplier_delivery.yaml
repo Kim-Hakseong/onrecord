@@ -1,7 +1,7 @@
 name: supplier_delivery
 title: Supplier delivery confirmation
 subject_label: purchase order
-locale: ko-KR
+locale: en-US
 
 # Roles the caller may encounter. Authority is checked against this vocabulary;
 # anyone who cannot be placed in it answers as `unknown` and cannot commit.

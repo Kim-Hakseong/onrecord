@@ -37,8 +37,10 @@ def date_field() -> FieldSpec:
 
 @pytest.fixture
 def transcript() -> str:
+    """English, like the demo corpus: a reviewer has to be able to check that a
+    highlighted quote really is in the transcript."""
     return (
-        "agent: 출고 날짜를 알려주시겠습니까?\n"
-        "callee: 네, 영업 담당입니다. 9월 24일에 출고됩니다.\n"
-        "agent: 감사합니다."
+        "agent: What date can you ship?\n"
+        "callee: Yes, this is the sales rep. It ships on September 24th.\n"
+        "agent: Thank you."
     )

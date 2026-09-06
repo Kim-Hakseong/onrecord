@@ -29,7 +29,7 @@ def test_a_call_task_flattens_into_one_outcome():
     assert outcome.status == "completed"
     assert outcome.turns[0]["speaker"] == SPEAKER_AGENT
     assert outcome.turns[1]["speaker"] == SPEAKER_CALLEE
-    assert "9월 24일에 출고됩니다." in outcome.transcript
+    assert "It ships on September 24th." in outcome.transcript
     assert outcome.structured_result["promised_ship_date"] == "2026-09-24"
     assert outcome.duration_seconds == 31
     assert outcome.reached_someone
@@ -52,7 +52,7 @@ def test_a_payload_missing_everything_does_not_raise():
 def test_unknown_speakers_are_labelled_not_dropped():
     turns = outcome_from_payload(_payload("03_supplier_voicemail.json")).turns
     assert turns[0]["speaker"] == "unknown"
-    assert "지금은 전화를 받을 수 없습니다" in render_transcript(turns)
+    assert "The person you are calling is not available" in render_transcript(turns)
 
 
 def test_a_live_call_without_credentials_fails_loudly_and_early():

@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "scenario": "supplier_korean",
+    "schema": "supplier_delivery",
+    "subject_id": "PO-1045",
+    "expected": {
+      "promised_ship_date": "CONFIRMED",
+      "quantity_committed": "CONFIRMED",
+      "partial_shipment_ok": "UNRESOLVED",
+      "blocking_reason": "UNRESOLVED"
+    },
+    "note": "The same five rules, in another language. Nothing in the adjudicator knows what script this is: rule 1 is a substring check, so a quote either sits in the transcript or it does not. The only language-aware code anywhere is the date parser, which reads both 'September 24th' and '9월 24일'. Recorded before the pack's locale was switched to en-US, and kept deliberately -- the rest of the corpus is English because the reviewers are."
+  },
+  "call": {
+    "id": "call_onrecord_0008",
+    "object": "call_task",
+    "status": "completed",
+    "task": "Confirm the ship date for purchase order PO-1045.",
+    "structured_result": {
+      "promised_ship_date": "2026-09-24",
+      "quantity_committed": "500",
+      "respondent_role": "sales_rep"
+    },
+    "recipients": [
+      {
+        "id": "rcp_0008",
+        "phones": ["+821000001045"],
+        "locale": "ko-KR",
+        "region": "KR",
+        "status": "completed",
+        "structured_result": null,
+        "summary": "Ship date committed for September 24th.",
+        "attempts": [
+          {
+            "id": "att_0008",
+            "phone": "+821000001045",
+            "status": "completed",
+            "started_at": "2026-09-11T08:10:00+00:00",
+            "completed_at": "2026-09-11T08:10:29+00:00",
+            "summary": "Date and quantity answered.",
+            "provider_call_id": "prov_0008",
+            "failure_code": null,
+            "failure_message": null,
+            "transcript_turns": [
+              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 발주번호 PO-1045 출고 일정 확인차 연락드렸습니다."},
+              {"offset_seconds": 6, "speaker": "user", "text": "네, 영업 담당 김민수입니다."},
+              {"offset_seconds": 11, "speaker": "bot", "text": "출고 가능한 날짜를 알려주시겠습니까?"},
+              {"offset_seconds": 15, "speaker": "user", "text": "9월 24일에 출고됩니다."},
+              {"offset_seconds": 19, "speaker": "bot", "text": "그 날짜에 몇 개가 나가나요?"},
+              {"offset_seconds": 23, "speaker": "user", "text": "500개 전량 나갑니다."},
+              {"offset_seconds": 27, "speaker": "bot", "text": "감사합니다."}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "spans": {
+    "respondent_role": "sales_rep",
+    "respondent_quote": "네, 영업 담당 김민수입니다.",
+    "fields": [
+      {"name": "promised_ship_date", "value": "9월 24일", "quote": "9월 24일에 출고됩니다."},
+      {"name": "quantity_committed", "value": "500", "quote": "500개 전량 나갑니다."}
+    ]
+  }
+}

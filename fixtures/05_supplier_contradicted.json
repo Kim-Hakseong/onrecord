@@ -26,7 +26,7 @@
       {
         "id": "rcp_0005",
         "phones": ["+821000001042"],
-        "locale": "ko-KR",
+        "locale": "en-US",
         "region": "KR",
         "status": "completed",
         "structured_result": null,
@@ -43,15 +43,15 @@
             "failure_code": null,
             "failure_message": null,
             "transcript_turns": [
-              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 발주번호 PO-1042 출고 일정 확인차 연락드렸습니다."},
-              {"offset_seconds": 6, "speaker": "user", "text": "네, 거래처 관리 담당 이수진입니다."},
-              {"offset_seconds": 11, "speaker": "bot", "text": "이 주문은 언제 출고 가능하십니까?"},
-              {"offset_seconds": 15, "speaker": "user", "text": "10월 2일에 출고 가능합니다. 그 전에는 어렵습니다."},
-              {"offset_seconds": 22, "speaker": "bot", "text": "수량은 몇 개가 나가나요?"},
-              {"offset_seconds": 26, "speaker": "user", "text": "300개 나갑니다."},
-              {"offset_seconds": 30, "speaker": "bot", "text": "일정이 밀린 이유를 알려주실 수 있을까요?"},
-              {"offset_seconds": 35, "speaker": "user", "text": "원자재 입고가 지연되고 있습니다."},
-              {"offset_seconds": 42, "speaker": "bot", "text": "확인 감사합니다."}
+              {"offset_seconds": 0, "speaker": "bot", "text": "Hello, I'm calling about the ship date on purchase order PO-1042."},
+              {"offset_seconds": 6, "speaker": "user", "text": "Yes, this is Su-jin Lee, I manage this account."},
+              {"offset_seconds": 11, "speaker": "bot", "text": "When can this order ship?"},
+              {"offset_seconds": 15, "speaker": "user", "text": "We can ship on October 2nd. Anything earlier isn't going to happen."},
+              {"offset_seconds": 22, "speaker": "bot", "text": "How many units go out?"},
+              {"offset_seconds": 26, "speaker": "user", "text": "300 units."},
+              {"offset_seconds": 30, "speaker": "bot", "text": "Can you tell me what pushed it back?"},
+              {"offset_seconds": 35, "speaker": "user", "text": "Raw material deliveries are running late."},
+              {"offset_seconds": 42, "speaker": "bot", "text": "Thank you for confirming."}
             ]
           }
         ]
@@ -60,11 +60,11 @@
   },
   "spans": {
     "respondent_role": "account_manager",
-    "respondent_quote": "네, 거래처 관리 담당 이수진입니다.",
+    "respondent_quote": "Yes, this is Su-jin Lee, I manage this account.",
     "fields": [
-      {"name": "promised_ship_date", "value": "2026-10-02", "quote": "10월 2일에 출고 가능합니다."},
-      {"name": "quantity_committed", "value": "300", "quote": "300개 나갑니다."},
-      {"name": "blocking_reason", "value": "material_shortage", "quote": "원자재 입고가 지연되고 있습니다."}
+      {"name": "promised_ship_date", "value": "October 2nd", "quote": "We can ship on October 2nd."},
+      {"name": "quantity_committed", "value": "300", "quote": "300 units."},
+      {"name": "blocking_reason", "value": "material_shortage", "quote": "Raw material deliveries are running late."}
     ]
   }
 }

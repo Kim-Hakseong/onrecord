@@ -19,7 +19,7 @@ uv run pytest -q
 uv run onrecord --replay --schema schemas/supplier_delivery.yaml
 ```
 
-The third command adjudicates six recorded calls and prints one verdict per field, with the
+The third command adjudicates seven recorded calls and prints one verdict per field, with the
 sentence each verdict came from. To see the same corpus through a different domain pack, with
 no code change:
 
@@ -82,17 +82,25 @@ and it has to find a quote before it can settle anything.
 
 ## What the corpus shows
 
-Six recorded calls, replayed by `uv run onrecord --replay` and asserted in
+Eight recorded calls, replayed by `uv run onrecord --replay` and asserted in
 `tests/test_replay.py`:
 
 | Scenario | Outcome |
 |---|---|
 | Evasive answer ("let me check and get back to you") | date `UNRESOLVED`, blocking reason `CONFIRMED` |
 | Follow-up call | asks 3 fields instead of 4, all settle |
-| Stand-in answered | date `NO_AUTHORITY` — the assistant may report the reason, not commit the date |
 | Voicemail | every field `UNRESOLVED`, all requeued |
+| Stand-in answered | date `NO_AUTHORITY` — the assistant may report the reason, not commit the date |
 | Supplier moved the date | `CONTRADICTED` against the ERP's 2026-09-20 |
 | Model paraphrased the sentence | value discarded, field stays open |
+| Reference check (second domain pack) | rehire question `NO_AUTHORITY`, the rest settle |
+| The same call in Korean | identical verdicts — see below |
+
+The transcripts are in English so that a reader can check for themselves that a highlighted
+quote really is in the call. One is deliberately in Korean: the adjudicator has no language in
+it either, because rule 1 is a substring check, so a quote is present or it is not. The only
+language-aware code anywhere is the date parser, which reads both `September 24th` and
+`9월 24일`.
 
 **Values that settled without a verbatim quote: 0.** That is the number this design is for, and
 it is asserted per fixture rather than claimed in prose.
@@ -136,8 +144,9 @@ cd web && npm install && npm run dev
 - **Counterpart calls are re-enacted.** The people on the other end of the demo calls are the
   builder's own numbers and an acquaintance following a script, not real suppliers. This is
   stated in the demo video's subtitles as well.
-- **Korean only.** The date parser understands `9월 24일`, `2026-09-24` and `9/24`. Nothing else
-  has been checked.
+- **Two languages, and only just.** The date parser reads English month names, ISO dates,
+  `9/24`, and Korean `9월 24일`. Nothing else has been checked, and the boolean vocabulary is
+  smaller still.
 - **IVR trees are unhandled.** A call that lands in a phone menu produces `UNRESOLVED` rows and
   no attempt to navigate the menu.
 - **Transfers and three-way calls are out of scope.** The adjudicator reads the last attempt of

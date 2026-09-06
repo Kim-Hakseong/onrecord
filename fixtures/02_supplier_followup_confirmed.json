@@ -25,7 +25,7 @@
       {
         "id": "rcp_0002",
         "phones": ["+821000001041"],
-        "locale": "ko-KR",
+        "locale": "en-US",
         "region": "KR",
         "status": "completed",
         "structured_result": null,
@@ -42,15 +42,15 @@
             "failure_code": null,
             "failure_message": null,
             "transcript_turns": [
-              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, PO-1041 출고일 확인차 다시 연락드렸습니다."},
-              {"offset_seconds": 5, "speaker": "user", "text": "네, 영업 담당 김민수입니다. 확인했습니다."},
-              {"offset_seconds": 10, "speaker": "bot", "text": "출고 가능한 날짜를 알려주시겠습니까?"},
-              {"offset_seconds": 14, "speaker": "user", "text": "9월 24일에 출고됩니다."},
-              {"offset_seconds": 18, "speaker": "bot", "text": "그 날짜에 몇 개가 나가나요?"},
-              {"offset_seconds": 22, "speaker": "user", "text": "500개 전량 나갑니다."},
-              {"offset_seconds": 25, "speaker": "bot", "text": "일부만 먼저 보내는 것도 가능할까요?"},
-              {"offset_seconds": 28, "speaker": "user", "text": "네, 가능합니다."},
-              {"offset_seconds": 31, "speaker": "bot", "text": "감사합니다. 좋은 하루 보내세요."}
+              {"offset_seconds": 0, "speaker": "bot", "text": "Hello, calling again about PO-1041 to confirm the ship date."},
+              {"offset_seconds": 5, "speaker": "user", "text": "Yes, Min-su Kim from sales. I checked on it."},
+              {"offset_seconds": 10, "speaker": "bot", "text": "What date can you ship?"},
+              {"offset_seconds": 14, "speaker": "user", "text": "It ships on September 24th."},
+              {"offset_seconds": 18, "speaker": "bot", "text": "How many units go out that day?"},
+              {"offset_seconds": 22, "speaker": "user", "text": "All 500 units."},
+              {"offset_seconds": 25, "speaker": "bot", "text": "Would a partial shipment be possible if it comes to that?"},
+              {"offset_seconds": 28, "speaker": "user", "text": "Yes, that's possible."},
+              {"offset_seconds": 31, "speaker": "bot", "text": "Thank you, have a good day."}
             ]
           }
         ]
@@ -59,11 +59,11 @@
   },
   "spans": {
     "respondent_role": "sales_rep",
-    "respondent_quote": "네, 영업 담당 김민수입니다.",
+    "respondent_quote": "Yes, Min-su Kim from sales.",
     "fields": [
-      {"name": "promised_ship_date", "value": "2026-09-24", "quote": "9월 24일에 출고됩니다."},
-      {"name": "quantity_committed", "value": "500", "quote": "500개 전량 나갑니다."},
-      {"name": "partial_shipment_ok", "value": "네", "quote": "네, 가능합니다."}
+      {"name": "promised_ship_date", "value": "September 24th", "quote": "It ships on September 24th."},
+      {"name": "quantity_committed", "value": "500", "quote": "All 500 units."},
+      {"name": "partial_shipment_ok", "value": "yes", "quote": "Yes, that's possible."}
     ]
   }
 }

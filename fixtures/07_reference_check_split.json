@@ -18,7 +18,7 @@
     "task": "Reference check for candidate CAND-2291.",
     "structured_result": {
       "employment_end_date": "2026-03-31",
-      "final_title": "선임 연구원",
+      "final_title": "Senior Researcher",
       "eligible_for_rehire": "yes",
       "departure_reason": "resigned",
       "respondent_role": "direct_manager"
@@ -27,7 +27,7 @@
       {
         "id": "rcp_0007",
         "phones": ["+821000002291"],
-        "locale": "ko-KR",
+        "locale": "en-US",
         "region": "KR",
         "status": "completed",
         "structured_result": null,
@@ -39,21 +39,21 @@
             "status": "completed",
             "started_at": "2026-09-11T07:40:00+00:00",
             "completed_at": "2026-09-11T07:40:48+00:00",
-            "summary": "Rehire question deferred to HR.",
+            "summary": "Rehire question answered by someone who cannot answer it.",
             "provider_call_id": "prov_0007",
             "failure_code": null,
             "failure_message": null,
             "transcript_turns": [
-              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 채용 절차 관련 평판 조회 차 연락드렸습니다. 통화 괜찮으실까요?"},
-              {"offset_seconds": 7, "speaker": "user", "text": "네, 제가 직속 팀장이었습니다."},
-              {"offset_seconds": 12, "speaker": "bot", "text": "마지막 근무일이 언제였는지 알려주시겠습니까?"},
-              {"offset_seconds": 17, "speaker": "user", "text": "2026년 3월 31일까지 근무했습니다."},
-              {"offset_seconds": 23, "speaker": "bot", "text": "퇴사 시점의 직함은 무엇이었나요?"},
-              {"offset_seconds": 27, "speaker": "user", "text": "직함은 선임 연구원이었습니다."},
-              {"offset_seconds": 32, "speaker": "bot", "text": "재입사 가능 여부도 확인 가능할까요?"},
-              {"offset_seconds": 37, "speaker": "user", "text": "네, 다시 뽑아도 괜찮습니다."},
-              {"offset_seconds": 44, "speaker": "bot", "text": "퇴사 사유는 어떻게 기록되어 있나요?"},
-              {"offset_seconds": 48, "speaker": "user", "text": "본인 사정으로 사직했습니다."}
+              {"offset_seconds": 0, "speaker": "bot", "text": "Hello, I'm calling for a reference check on a former colleague of yours. Is now a good time?"},
+              {"offset_seconds": 7, "speaker": "user", "text": "Yes, I was her direct manager."},
+              {"offset_seconds": 12, "speaker": "bot", "text": "Could you tell me her last working day?"},
+              {"offset_seconds": 17, "speaker": "user", "text": "She worked through March 31st, 2026."},
+              {"offset_seconds": 23, "speaker": "bot", "text": "And what title did she hold when she left?"},
+              {"offset_seconds": 27, "speaker": "user", "text": "Her title was Senior Researcher."},
+              {"offset_seconds": 32, "speaker": "bot", "text": "Would the company consider rehiring her?"},
+              {"offset_seconds": 37, "speaker": "user", "text": "Yes, we'd be glad to have her back."},
+              {"offset_seconds": 44, "speaker": "bot", "text": "How is the reason for leaving recorded?"},
+              {"offset_seconds": 48, "speaker": "user", "text": "She resigned for personal reasons."}
             ]
           }
         ]
@@ -62,12 +62,12 @@
   },
   "spans": {
     "respondent_role": "direct_manager",
-    "respondent_quote": "네, 제가 직속 팀장이었습니다.",
+    "respondent_quote": "Yes, I was her direct manager.",
     "fields": [
-      {"name": "employment_end_date", "value": "2026-03-31", "quote": "2026년 3월 31일까지 근무했습니다."},
-      {"name": "final_title", "value": "선임 연구원", "quote": "직함은 선임 연구원이었습니다."},
-      {"name": "eligible_for_rehire", "value": "네", "quote": "네, 다시 뽑아도 괜찮습니다."},
-      {"name": "departure_reason", "value": "resigned", "quote": "본인 사정으로 사직했습니다."}
+      {"name": "employment_end_date", "value": "March 31st, 2026", "quote": "She worked through March 31st, 2026."},
+      {"name": "final_title", "value": "Senior Researcher", "quote": "Her title was Senior Researcher."},
+      {"name": "eligible_for_rehire", "value": "yes", "quote": "Yes, we'd be glad to have her back."},
+      {"name": "departure_reason", "value": "resigned", "quote": "She resigned for personal reasons."}
     ]
   }
 }

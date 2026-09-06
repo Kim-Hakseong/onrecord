@@ -27,7 +27,7 @@
       {
         "id": "rcp_0001",
         "phones": ["+821000001041"],
-        "locale": "ko-KR",
+        "locale": "en-US",
         "region": "KR",
         "status": "completed",
         "structured_result": null,
@@ -44,14 +44,14 @@
             "failure_code": null,
             "failure_message": null,
             "transcript_turns": [
-              {"offset_seconds": 0, "speaker": "bot", "text": "안녕하세요, 대한정밀 구매팀 대신 연락드렸습니다. 발주번호 PO-1041 건으로 통화 가능하실까요?"},
-              {"offset_seconds": 6, "speaker": "user", "text": "네, 영업 담당 김민수입니다. 말씀하세요."},
-              {"offset_seconds": 11, "speaker": "bot", "text": "이 주문 출고 예정일을 확인하고 싶습니다. 정확한 날짜를 주실 수 있을까요?"},
-              {"offset_seconds": 18, "speaker": "user", "text": "음... 아마 이번 달 안에는 나갈 것 같은데요, 확인해보고 다시 연락드릴게요."},
-              {"offset_seconds": 27, "speaker": "bot", "text": "혹시 지금 일정이 늦어지는 이유가 있을까요?"},
-              {"offset_seconds": 32, "speaker": "user", "text": "자재 수급이 늦어져서 그렇습니다."},
-              {"offset_seconds": 38, "speaker": "bot", "text": "알겠습니다. 확인되시면 연락 부탁드립니다. 감사합니다."},
-              {"offset_seconds": 44, "speaker": "user", "text": "네, 알겠습니다."}
+              {"offset_seconds": 0, "speaker": "bot", "text": "Hello, I'm calling on behalf of the purchasing team at Daehan Precision about purchase order PO-1041. Do you have a moment?"},
+              {"offset_seconds": 8, "speaker": "user", "text": "Sure, this is Min-su Kim, I handle sales here."},
+              {"offset_seconds": 13, "speaker": "bot", "text": "I'd like to confirm the ship date on this order. Can you give me a firm date?"},
+              {"offset_seconds": 20, "speaker": "user", "text": "Hmm, it should go out sometime this month I think, but let me check and get back to you."},
+              {"offset_seconds": 29, "speaker": "bot", "text": "Is there anything holding it up at the moment?"},
+              {"offset_seconds": 34, "speaker": "user", "text": "We're waiting on material from our own supplier."},
+              {"offset_seconds": 39, "speaker": "bot", "text": "Understood. Please let us know once it's confirmed. Thank you."},
+              {"offset_seconds": 44, "speaker": "user", "text": "Will do."}
             ]
           }
         ]
@@ -60,12 +60,12 @@
   },
   "spans": {
     "respondent_role": "sales_rep",
-    "respondent_quote": "네, 영업 담당 김민수입니다.",
+    "respondent_quote": "Sure, this is Min-su Kim, I handle sales here.",
     "fields": [
       {
         "name": "blocking_reason",
         "value": "material_shortage",
-        "quote": "자재 수급이 늦어져서 그렇습니다."
+        "quote": "We're waiting on material from our own supplier."
       }
     ]
   }

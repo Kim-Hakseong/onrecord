@@ -81,7 +81,7 @@ def test_a_paraphrased_span_is_visibly_discarded(tmp_path):
     row = next(r for r in delta.rows if r.field == "promised_ship_date")
     assert row.verdict is Verdict.UNRESOLVED
     assert row.reason.value == "quote_not_in_transcript"
-    assert row.quote == "10월 15일에 출고하겠습니다."  # what the model claimed
+    assert row.quote == "We'll ship on October 15th."  # what the model claimed
     assert row.quote not in delta.transcript  # and what the transcript says
 
 

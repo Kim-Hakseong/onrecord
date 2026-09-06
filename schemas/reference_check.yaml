@@ -1,7 +1,7 @@
 name: reference_check
 title: Employment reference check
 subject_label: candidate
-locale: ko-KR
+locale: en-US
 
 roles:
   - direct_manager
