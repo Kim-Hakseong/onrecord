@@ -95,8 +95,12 @@ Six recorded calls, replayed by `uv run onrecord --replay` and asserted in
 | Model paraphrased the sentence | value discarded, field stays open |
 
 **Values that settled without a verbatim quote: 0.** That is the number this design is for, and
-it is asserted per fixture rather than claimed in prose. We do not report an accuracy
-percentage — six scenarios cannot support one.
+it is asserted per fixture rather than claimed in prose.
+
+Read it for what it is worth: these six transcripts were written by the author, so the zero
+shows the rules behave as specified, not that adjudication is accurate on real calls. That is
+also why there is no accuracy percentage here — six scenarios cannot support one — and why the
+first item under "what does not work yet" is that the corpus is not yet made of real calls.
 
 ## Call budget
 
