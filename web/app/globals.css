@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* A ledger, not a dashboard. Every token here is fixed in the design guide;
+   the four verdict colours in particular are part of the product, not a theme. */
+@theme {
+  --color-bg: #0b0d10;
+  --color-surface: #14181d;
+  --color-surface-2: #1c2229;
+  --color-border: #232a32;
+  --color-border-strong: #333c47;
+
+  --color-text: #e6eaf0;
+  --color-text-2: #99a3b0;
+  --color-text-3: #5c6673;
+
+  --color-confirmed: #34d399;
+  --color-contradicted: #f87171;
+  --color-unresolved: #fbbf24;
+  --color-noauthority: #a78bfa;
+
+  --color-dial: #38bdf8;
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+/* The only transitions in the product. No skeletons, no fake progress. */
+* {
+  transition-property: background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+mark.quote {
+  background: rgba(56, 189, 248, 0.14);
+  border-bottom: 1px solid var(--color-dial);
+  border-radius: 2px;
+  color: inherit;
+  padding: 0 1px;
+}
+
+.dialing::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-dial);
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}

@@ -222,7 +222,8 @@ def _ledger(args: argparse.Namespace) -> int:
         return 0
     for row in rows:
         badge = BADGE.get(row["verdict"], row["verdict"])
-        quote = f'  "{row["quote"]}"' if row["quote"] else ""
+        # Only a span that was actually found in the call reads as evidence.
+        quote = f'  "{row["quote"]}"' if row["quote_start"] >= 0 else ""
         print(f'{row["subject_id"]:<10} {row["field"]:<22} {badge} {row["value"] or "-":<14}{quote}')
     return 0
 
