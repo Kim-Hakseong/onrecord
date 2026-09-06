@@ -25,7 +25,13 @@ from .constants import (
     TAGLINE,
     VERDICT_COUNT,
 )
-from .explain import explain_stored_row, sort_key, verdict_counts
+from .explain import (
+    explain_stored_row,
+    group_by_subject,
+    sort_key,
+    transcript_lines,
+    verdict_counts,
+)
 from .paths import schema_dir
 from .pipeline import MODE_LIVE, CallBudgetExhausted, run
 from .planner import plan_call
@@ -96,6 +102,7 @@ def create_app(db_path: str | Path = DEFAULT_DB_PATH, schema_dir: str | Path = S
             "schema": schema,
             "subjects": subjects,
             "rows": latest,
+            "groups": group_by_subject(latest, subjects),
             "history": rows,
             "counts": verdict_counts(latest),
         }
@@ -126,8 +133,14 @@ def create_app(db_path: str | Path = DEFAULT_DB_PATH, schema_dir: str | Path = S
             if call is None:
                 raise HTTPException(status_code=404, detail=f"no such call: {call_id}")
             rows = [explain_stored_row(row) for row in s.ledger(call_id=call_id)]
+        spans = [
+            (row["quote_start"], row["quote_end"], row["field"])
+            for row in rows
+            if row["quote_start"] >= 0
+        ]
         return {
             "call": call,
+            "lines": transcript_lines(call["transcript"], call["turns"], spans),
             "rows": sorted(rows, key=sort_key),
             "counts": verdict_counts(rows),
             "rejected_spans": [r["rejected_span"] for r in rows if r["rejected_span"]],

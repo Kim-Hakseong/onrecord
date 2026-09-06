@@ -158,3 +158,38 @@ def test_running_a_follow_up_without_credentials_fails_with_a_clear_status(clien
     )
     assert response.status_code in (503, 409)
     assert "CALLE_API_KEY" in response.json()["detail"] or "budget" in response.json()["detail"].lower()
+
+
+def test_call_detail_returns_a_speaker_per_line_transcript(client):
+    """The stored transcript is one line; the screen needs the turns back."""
+    calls = client.get("/api/calls", params={"subject": "PO-1042"}).json()
+    body = client.get(f"/api/calls/{calls[0]['id']}").json()
+    lines = body["lines"]
+    assert len(lines) == len(body["call"]["turns"])
+    assert [line["speaker"] for line in lines][:2] == ["agent", "callee"]
+    for line in lines:
+        assert "".join(piece["text"] for piece in line["segments"]) == line["text"]
+
+
+def test_a_confirmed_quote_is_highlighted_in_the_speaker_who_said_it(client):
+    calls = client.get("/api/calls", params={"subject": "PO-1042"}).json()
+    body = client.get(f"/api/calls/{calls[0]['id']}").json()
+    highlighted = [
+        (line["speaker"], piece)
+        for line in body["lines"]
+        for piece in line["segments"]
+        if piece["field"]
+    ]
+    assert highlighted, "confirmed values must be visible in the transcript"
+    # The agent proposing a date is not evidence; only the callee's words are.
+    assert {speaker for speaker, _ in highlighted} == {"callee"}
+
+
+def test_the_ledger_groups_each_subject_into_one_block(client):
+    body = client.get("/api/ledger", params={"schema": "supplier_delivery"}).json()
+    groups = body["groups"]
+    ids = [group["subject_id"] for group in groups]
+    assert len(ids) == len(set(ids)), "a subject must not appear in two blocks"
+    assert sum(len(group["rows"]) for group in groups) == len(body["rows"])
+    # Action-first ordering survives grouping: the contradiction leads.
+    assert groups[0]["counts"]["CONTRADICTED"] == 1
