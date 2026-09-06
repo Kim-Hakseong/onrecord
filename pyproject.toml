@@ -19,7 +19,7 @@ dependencies = [
 onrecord = "onrecord.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "httpx>=0.28.1"]
 
 [build-system]
 requires = ["hatchling"]
@@ -33,4 +33,4 @@ testpaths = ["tests"]
 addopts = "-q"
 
 [dependency-groups]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "httpx>=0.28.1"]
