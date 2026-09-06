@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Empty, Header, Shell } from "@/components/chrome";
+import { Header, Label, Notice, PageTitle, Shell } from "@/components/chrome";
 import { VerdictBadge } from "@/components/verdict";
 import {
   getMeta,
@@ -10,6 +10,54 @@ import {
   type Meta,
   type RequeueCard,
 } from "@/lib/api";
+
+/** The goal is shown verbatim, never summarised — but it is long enough to bury
+ *  the card, so it collapses to its first line until asked for. */
+function NextGoal({ card }: { card: RequeueCard }) {
+  const [open, setOpen] = useState(false);
+  const questions = card.next_fields.length;
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-2 text-left"
+      >
+        <Label>
+          next goal · {questions} {questions === 1 ? "question" : "questions"}
+        </Label>
+        <span
+          className="text-[11px]"
+          style={{ color: "var(--ink-3)" }}
+          aria-hidden="true"
+        >
+          {open ? "hide" : "show"}
+        </span>
+      </button>
+
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {card.next_fields.map((field) => (
+          <span
+            key={field}
+            className="pill px-2.5 py-1 font-mono text-[12px]"
+            style={{ background: "var(--surface-sunken)", color: "var(--ink-2)" }}
+          >
+            {field}
+          </span>
+        ))}
+      </div>
+
+      {open ? (
+        <pre
+          className="sunken scroll-soft mt-3 max-h-56 overflow-auto whitespace-pre-wrap p-4 font-mono text-[12px] leading-relaxed"
+          style={{ color: "var(--ink-2)" }}
+        >
+          {card.next_goal}
+        </pre>
+      ) : null}
+    </div>
+  );
+}
 
 export default function RequeueScreen() {
   const [meta, setMeta] = useState<Meta | null>(null);
@@ -42,111 +90,145 @@ export default function RequeueScreen() {
     }
   }
 
+  const actionable = cards?.filter((card) => card.actionable).length ?? 0;
+
   return (
     <Shell>
       <Header meta={meta} />
-      {error ? <Empty>{error}</Empty> : null}
 
-      <h1 className="px-4 pt-4 text-[20px] font-semibold tracking-[-0.01em]">
-        Requeue ({cards?.length ?? 0})
-      </h1>
+      <PageTitle
+        eyebrow="Fields waiting on another call"
+        title={cards ? `${actionable} ready to redial` : "Requeue"}
+      />
 
-      <div className="space-y-3 p-4">
-        {cards?.map((card) => (
-          <article
-            key={card.subject_id}
-            className="rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-4"
-            style={{ opacity: card.actionable ? 1 : 0.55 }}
-          >
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-[13px]">{card.subject_id}</span>
-              <span className="text-[12px] text-[var(--color-text-3)]">
-                {card.label}
-              </span>
-              <span className="ml-auto font-mono text-[12px] text-[var(--color-text-3)]">
-                attempt {card.attempts} of {card.max_attempts}
-                {card.actionable ? "" : " · EXHAUSTED"}
-              </span>
-            </div>
+      {error ? <Notice tone="alert">{error}</Notice> : null}
 
-            <div className="mt-3">
-              <h3 className="font-mono text-[11px] uppercase tracking-[0.06em] text-[var(--color-text-2)]">
-                still open
-              </h3>
-              {card.open.map((item) => (
-                <div key={item.field} className="mt-1 flex items-center gap-3">
-                  <span className="font-mono text-[13px]">{item.field}</span>
-                  <VerdictBadge verdict={item.verdict} />
-                  {item.needs_different_respondent ? (
-                    <span className="text-[12px] text-[var(--color-text-2)]">
-                      needs a different respondent
-                    </span>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-
-            {/* This block is the point of the screen: proof that the follow-up
-                call will not ask again about anything already settled. */}
-            {card.dropped_from_goal.length ? (
-              <div className="mt-3">
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.06em] text-[var(--color-text-2)]">
-                  dropped from goal
-                </h3>
-                {card.dropped_from_goal.map((item) => (
-                  <div key={item.field} className="mt-1 flex items-center gap-3">
-                    <span className="font-mono text-[13px] text-[var(--color-text-2)]">
-                      {item.field}
-                    </span>
-                    <VerdictBadge verdict={item.verdict} />
-                    <span className="font-mono text-[13px] text-[var(--color-text-2)]">
-                      {item.value || "—"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-
-            <div className="mt-3">
-              <h3 className="font-mono text-[11px] uppercase tracking-[0.06em] text-[var(--color-text-2)]">
-                next goal ({card.next_fields.length}{" "}
-                {card.next_fields.length === 1 ? "question" : "questions"})
-              </h3>
-              {/* The exact text CALL-E will be given. Not a summary of it. */}
-              <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap rounded-[4px] bg-[var(--color-surface-2)] p-3 font-mono text-[12px] text-[var(--color-text-2)]">
-                {card.next_goal}
-              </pre>
-            </div>
-
-            <div className="mt-3 flex items-center gap-3">
-              <button
-                type="button"
-                disabled={!card.actionable || budgetHeld || busy !== null}
-                onClick={() => callAgain(card)}
-                title={
-                  budgetHeld
-                    ? "call budget reserved for demo"
-                    : card.actionable
-                      ? "places a real call"
-                      : "no attempts left"
-                }
-                className="rounded-md px-4 py-2 font-mono text-[12px] disabled:cursor-not-allowed disabled:opacity-40"
-                style={{ background: "var(--color-dial)", color: "#08131a" }}
-              >
-                {busy === card.subject_id ? "calling…" : "Call again →"}
-              </button>
-              {budgetHeld ? (
-                <span className="text-[12px] text-[var(--color-unresolved)]">
-                  call budget reserved for demo
+      <div className="space-y-3 px-4 sm:px-6">
+        {cards?.map((card) => {
+          const exhausted = !card.actionable;
+          return (
+            <article
+              key={card.subject_id}
+              className="panel p-5"
+              style={{ opacity: exhausted ? 0.62 : 1 }}
+            >
+              <header className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span
+                  className="font-mono text-[14px] font-medium"
+                  style={{ color: "var(--ink)" }}
+                >
+                  {card.subject_id}
                 </span>
-              ) : null}
-            </div>
-          </article>
-        ))}
+                <span className="text-[13px]" style={{ color: "var(--ink-2)" }}>
+                  {card.label}
+                </span>
+                <span
+                  className="pill ml-auto px-2.5 py-1 font-mono text-[11px]"
+                  style={{
+                    background: "var(--surface-sunken)",
+                    color: exhausted ? "var(--contradicted-fg)" : "var(--ink-3)",
+                  }}
+                >
+                  attempt {card.attempts} of {card.max_attempts}
+                  {exhausted ? " · exhausted" : ""}
+                </span>
+              </header>
+
+              <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                <div>
+                  <Label>still open</Label>
+                  <div className="mt-2 space-y-1.5">
+                    {card.open.map((item) => (
+                      <div key={item.field} className="flex flex-wrap items-center gap-2">
+                        <span
+                          className="font-mono text-[13px]"
+                          style={{ color: "var(--ink)" }}
+                        >
+                          {item.field}
+                        </span>
+                        <VerdictBadge verdict={item.verdict} size="sm" />
+                        {item.needs_different_respondent ? (
+                          <span
+                            className="text-[12px]"
+                            style={{ color: "var(--ink-3)" }}
+                          >
+                            needs a different respondent
+                          </span>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* This block is the point of the screen: visible proof that the
+                    follow-up will not ask again about anything already settled. */}
+                {card.dropped_from_goal.length ? (
+                  <div>
+                    <Label>dropped from goal</Label>
+                    <div className="mt-2 space-y-1.5">
+                      {card.dropped_from_goal.map((item) => (
+                        <div key={item.field} className="flex flex-wrap items-center gap-2">
+                          <span
+                            className="font-mono text-[13px]"
+                            style={{ color: "var(--ink-3)" }}
+                          >
+                            {item.field}
+                          </span>
+                          <VerdictBadge verdict={item.verdict} size="sm" />
+                          <span
+                            className="font-mono text-[12px]"
+                            style={{ color: "var(--ink-3)" }}
+                          >
+                            {item.value || "—"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-5">
+                <NextGoal card={card} />
+              </div>
+
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  disabled={exhausted || budgetHeld || busy !== null}
+                  onClick={() => callAgain(card)}
+                  title={
+                    budgetHeld
+                      ? "call budget reserved for demo"
+                      : exhausted
+                        ? "no attempts left"
+                        : "places a real call and spends call budget"
+                  }
+                  className="pill px-5 py-2.5 text-[13px] font-medium disabled:cursor-not-allowed disabled:opacity-45"
+                  style={{
+                    background: "var(--accent)",
+                    color: "var(--accent-ink)",
+                    boxShadow: "var(--shadow-float)",
+                  }}
+                >
+                  {busy === card.subject_id ? "calling…" : "Call again →"}
+                </button>
+                {budgetHeld ? (
+                  <span
+                    className="text-[12px]"
+                    style={{ color: "var(--unresolved-fg)" }}
+                  >
+                    call budget reserved for demo
+                  </span>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       {cards && cards.length === 0 ? (
-        <Empty>Nothing is waiting on another call.</Empty>
+        <Notice>Nothing is waiting on another call.</Notice>
       ) : null}
     </Shell>
   );

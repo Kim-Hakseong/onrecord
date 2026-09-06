@@ -2,14 +2,92 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Empty, Header, Shell } from "@/components/chrome";
+import { Header, Label, Notice, PageTitle, Shell } from "@/components/chrome";
 import { VerdictBadge, VerdictCounts, evidenceFor } from "@/components/verdict";
 import {
   getLedger,
   getMeta,
+  type LedgerGroup,
   type LedgerResponse,
+  type LedgerRow,
   type Meta,
 } from "@/lib/api";
+
+function Row({ row }: { row: LedgerRow }) {
+  const evidence = evidenceFor(row);
+  return (
+    <div
+      className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 border-t px-4 py-3 sm:grid-cols-[minmax(0,13rem)_7.5rem_minmax(0,1fr)_3rem] sm:items-center"
+      style={{ borderColor: "var(--hairline)" }}
+    >
+      <span className="font-mono text-[13px]" style={{ color: "var(--ink)" }}>
+        {row.field}
+      </span>
+
+      <span className="justify-self-end sm:justify-self-start">
+        <VerdictBadge verdict={row.verdict} />
+      </span>
+
+      <span
+        className="col-span-2 font-mono text-[13px] sm:col-span-1"
+        style={{ color: row.value ? "var(--ink)" : "var(--ink-3)" }}
+      >
+        {row.value || "—"}
+      </span>
+
+      {row.call_id ? (
+        <Link
+          href={`/calls/${encodeURIComponent(row.call_id)}`}
+          className="font-mono text-[11px] underline-offset-4 hover:underline"
+          style={{ color: "var(--ink-3)" }}
+        >
+          {row.call_id.replace(/^call_onrecord_/, "#")}
+        </Link>
+      ) : (
+        <span />
+      )}
+
+      {/* Every row carries its evidence. A row with none is a bug, not a style
+          choice, so nothing is rendered rather than rendering an empty line. */}
+      {evidence ? (
+        <p
+          className="col-span-2 text-[12px] leading-relaxed sm:col-span-4 sm:pl-1"
+          style={{ color: "var(--ink-2)" }}
+        >
+          {evidence}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function Group({ group }: { group: LedgerGroup }) {
+  return (
+    <section className="panel overflow-hidden">
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3.5">
+        <span className="font-mono text-[14px] font-medium" style={{ color: "var(--ink)" }}>
+          {group.subject_id}
+        </span>
+        {group.label ? (
+          <span className="text-[13px]" style={{ color: "var(--ink-2)" }}>
+            {group.label}
+          </span>
+        ) : null}
+        {group.contact_org ? (
+          <span className="text-[12px]" style={{ color: "var(--ink-3)" }}>
+            {group.contact_org}
+          </span>
+        ) : null}
+        <span className="ml-auto">
+          <VerdictCounts counts={group.counts} compact />
+        </span>
+      </header>
+      {group.rows.map((row) => (
+        <Row key={`${row.subject_id}-${row.field}`} row={row} />
+      ))}
+    </section>
+  );
+}
 
 export default function LedgerScreen() {
   const [meta, setMeta] = useState<Meta | null>(null);
@@ -26,7 +104,7 @@ export default function LedgerScreen() {
         }
       })
       .catch((err) => setError(String(err)));
-    // The schema selector re-runs the ledger fetch below, not this one.
+    // The schema selector drives the ledger fetch below, not this one.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,81 +115,57 @@ export default function LedgerScreen() {
       .catch((err) => setError(String(err)));
   }, [schema]);
 
+  const open = ledger
+    ? ledger.counts.UNRESOLVED + ledger.counts.NO_AUTHORITY
+    : 0;
+
   return (
     <Shell>
       <Header meta={meta} schema={schema} onSchemaChange={setSchema} />
+
+      <PageTitle
+        eyebrow="Every field a call was supposed to settle"
+        title={
+          ledger
+            ? open === 0
+              ? "Nothing left open"
+              : `${open} still open`
+            : "Ledger"
+        }
+        aside={
+          ledger ? (
+            <div className="flex flex-col items-start gap-2 sm:items-end">
+              <Label>across all subjects</Label>
+              <VerdictCounts counts={ledger.counts} />
+            </div>
+          ) : null
+        }
+      />
+
       {error ? (
-        <Empty>
+        <Notice tone="alert">
           {error}. Start the API with{" "}
           <code className="font-mono">uv run onrecord serve</code>.
-        </Empty>
+        </Notice>
       ) : null}
 
       {ledger ? (
-        <>
-          <VerdictCounts counts={ledger.counts} />
-          <table className="w-full">
-            <thead>
-              <tr className="text-left font-mono text-[11px] uppercase tracking-[0.06em] text-[var(--color-text-3)]">
-                <th className="px-4 py-2 font-medium">subject</th>
-                <th className="px-4 py-2 font-medium">field</th>
-                <th className="px-4 py-2 font-medium">verdict</th>
-                <th className="px-4 py-2 font-medium">value</th>
-                <th className="px-4 py-2 font-medium">call</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ledger.rows.map((row) => {
-                const evidence = evidenceFor(row);
-                return (
-                  <tr
-                    key={`${row.subject_id}-${row.field}`}
-                    className="border-t border-[var(--color-border)] align-top hover:bg-[var(--color-surface-2)]"
-                  >
-                    <td className="px-4 py-3 font-mono text-[13px]">
-                      {row.subject_id}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="font-mono text-[13px]">{row.field}</div>
-                      {/* Every row carries its evidence. A row with none is a bug. */}
-                      {evidence ? (
-                        <div className="mt-1 pl-3 text-[12px] text-[var(--color-text-2)]">
-                          ▸ {evidence}
-                        </div>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3">
-                      <VerdictBadge verdict={row.verdict} />
-                    </td>
-                    <td className="px-4 py-3 font-mono text-[13px]">
-                      {row.value || "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      {row.call_id ? (
-                        <Link
-                          href={`/calls/${encodeURIComponent(row.call_id)}`}
-                          className="font-mono text-[12px] text-[var(--color-dial)]"
-                        >
-                          {row.call_id}
-                        </Link>
-                      ) : null}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {ledger.rows.length === 0 ? (
-            <Empty>
-              Nothing recorded for this domain pack yet. Run{" "}
-              <code className="font-mono">
-                uv run onrecord --replay --schema schemas/{schema}.yaml --db
-                data/onrecord.db
-              </code>
-              .
-            </Empty>
-          ) : null}
-        </>
+        <div className="space-y-3 px-4 sm:px-6">
+          {ledger.groups.map((group) => (
+            <Group key={group.subject_id} group={group} />
+          ))}
+        </div>
+      ) : null}
+
+      {ledger && ledger.groups.length === 0 ? (
+        <Notice>
+          Nothing recorded for this domain pack yet. Run{" "}
+          <code className="font-mono">
+            uv run onrecord --replay --schema schemas/{schema}.yaml --db
+            data/onrecord.db
+          </code>
+          .
+        </Notice>
       ) : null}
     </Shell>
   );

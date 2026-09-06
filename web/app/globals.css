@@ -1,64 +1,211 @@
 @import "tailwindcss";
 
-/* A ledger, not a dashboard. Every token here is fixed in the design guide;
-   the four verdict colours in particular are part of the product, not a theme. */
+/* ---------------------------------------------------------------------------
+   Soft-gradient design system.
+
+   Two things are load-bearing and survive every restyle:
+   1. The four verdicts stay visually distinct and never rely on hue alone --
+      every badge carries its word. Each verdict has a tinted surface and a
+      separate, darker/lighter foreground so text clears 4.5:1 in both themes;
+      the pastel surface colour is never used for text.
+   2. Machine-produced values (field names, dates, quotes, call ids) stay
+      monospaced. That is what visually separates "the system's fact" from
+      "a human's description", and it is an argument the product is making.
+--------------------------------------------------------------------------- */
+
 @theme {
-  --color-bg: #0b0d10;
-  --color-surface: #14181d;
-  --color-surface-2: #1c2229;
-  --color-border: #232a32;
-  --color-border-strong: #333c47;
-
-  --color-text: #e6eaf0;
-  --color-text-2: #99a3b0;
-  --color-text-3: #5c6673;
-
-  --color-confirmed: #34d399;
-  --color-contradicted: #f87171;
-  --color-unresolved: #fbbf24;
-  --color-noauthority: #a78bfa;
-
-  --color-dial: #38bdf8;
-
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: 24px;
+  --radius-inner: 16px;
+  --radius-pill: 999px;
 }
 
-html,
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --base: #f2edf9;
+  --mesh-1: rgba(186, 165, 235, 0.95); /* lavender */
+  --mesh-2: rgba(244, 176, 210, 0.92); /* pink */
+  --mesh-3: rgba(250, 205, 165, 0.9); /* peach */
+  --mesh-4: rgba(174, 210, 242, 0.82); /* sky */
+  --mesh-5: rgba(176, 226, 214, 0.72); /* mint */
+  --mesh-alpha: 1;
+
+  /* Opaque enough that a card interior reads as neutral. Any lower and the
+     mesh tints the card, which puts the background in competition with the
+     verdict colours -- the one thing the palette is not allowed to do. */
+  --surface: rgba(255, 255, 255, 0.76);
+  --surface-solid: rgba(255, 255, 255, 0.88);
+  --surface-2: rgba(255, 255, 255, 0.5);
+  --surface-sunken: rgba(120, 100, 160, 0.06);
+  --hairline: rgba(90, 70, 140, 0.1);
+  --hairline-strong: rgba(90, 70, 140, 0.18);
+
+  --ink: #2a2437;
+  --ink-2: #6b6480;
+  --ink-3: #877f96;
+
+  --shadow-card: 0 10px 34px rgba(90, 70, 140, 0.1);
+  --shadow-float: 0 6px 20px rgba(90, 70, 140, 0.14);
+
+  --accent: #7b5cd6;
+  --accent-ink: #ffffff;
+
+  --confirmed-bg: #d9f0e5;
+  --confirmed-fg: #16704d;
+  --contradicted-bg: #fbdae2;
+  --contradicted-fg: #a82348;
+  --unresolved-bg: #fbe8c9;
+  --unresolved-fg: #815310;
+  --noauthority-bg: #e7defa;
+  --noauthority-fg: #5636a6;
+
+  --quote-bg: rgba(123, 92, 214, 0.13);
+  --quote-line: rgba(123, 92, 214, 0.55);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --base: #100d1a;
+  --mesh-1: rgba(139, 106, 224, 0.62);
+  --mesh-2: rgba(226, 122, 178, 0.5);
+  --mesh-3: rgba(232, 154, 96, 0.42);
+  --mesh-4: rgba(94, 156, 224, 0.46);
+  --mesh-5: rgba(88, 196, 176, 0.34);
+  --mesh-alpha: 1;
+
+  --surface: rgba(17, 13, 28, 0.72);
+  --surface-solid: rgba(26, 21, 40, 0.82);
+  --surface-2: rgba(17, 13, 28, 0.5);
+  --surface-sunken: rgba(0, 0, 0, 0.22);
+  --hairline: rgba(255, 255, 255, 0.09);
+  --hairline-strong: rgba(255, 255, 255, 0.16);
+
+  --ink: #ece7f6;
+  --ink-2: #a8a0bd;
+  --ink-3: #756d88;
+
+  --shadow-card: 0 12px 38px rgba(0, 0, 0, 0.4);
+  --shadow-float: 0 6px 20px rgba(0, 0, 0, 0.45);
+
+  --accent: #b39cf5;
+  --accent-ink: #1b1428;
+
+  --confirmed-bg: rgba(52, 211, 153, 0.15);
+  --confirmed-fg: #6ee7b7;
+  --contradicted-bg: rgba(248, 113, 113, 0.13);
+  --contradicted-fg: #fca5a5;
+  --unresolved-bg: rgba(251, 191, 36, 0.15);
+  --unresolved-fg: #fcd34d;
+  --noauthority-bg: rgba(167, 139, 250, 0.14);
+  --noauthority-fg: #c4b5fd;
+
+  --quote-bg: rgba(179, 156, 245, 0.2);
+  --quote-line: rgba(179, 156, 245, 0.7);
+}
+
+html {
+  background: var(--base);
+}
+
+/* Deliberately no background here. `body::before` sits at z-index -1, and in the
+   root stacking context a negative-z child paints *before* the in-flow block
+   backgrounds — so a background on <body> covers the gradient completely. The
+   base colour lives on <html> instead, where the mesh paints on top of it. */
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  min-height: 100dvh;
+  color: var(--ink);
   font-family: var(--font-sans);
   font-size: 14px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* The only transitions in the product. No skeletons, no fake progress. */
-* {
-  transition-property: background-color, border-color;
-  transition-duration: 150ms;
+/* The gradient mesh from the reference: a few large, heavily blurred blobs
+   behind everything, fixed so scrolling does not drag the light around. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--mesh-alpha);
+  /* Centres are inside the viewport on purpose. Pushed outside — which is what
+     an inset overlay does — the blobs fall off the edges and the whole thing
+     washes out to flat lilac. */
+  background:
+    radial-gradient(34rem 26rem at 12% 8%, var(--mesh-1), transparent 70%),
+    radial-gradient(32rem 24rem at 88% 12%, var(--mesh-2), transparent 68%),
+    radial-gradient(38rem 30rem at 78% 72%, var(--mesh-3), transparent 70%),
+    radial-gradient(34rem 28rem at 16% 74%, var(--mesh-4), transparent 68%),
+    radial-gradient(30rem 24rem at 52% 38%, var(--mesh-5), transparent 72%);
+  filter: saturate(122%);
+  transition: opacity 300ms ease-out;
+}
+
+/* Frosted panel. One surface treatment, used everywhere. */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(22px) saturate(130%);
+  -webkit-backdrop-filter: blur(22px) saturate(130%);
+}
+
+.panel-flat {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-inner);
+}
+
+.sunken {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-inner);
+}
+
+.pill {
+  border-radius: var(--radius-pill);
+}
+
+.hairline {
+  border-color: var(--hairline);
+}
+
+/* Transitions are limited to colour and surface so a theme switch animates and
+   nothing else does. No entrances, no fake progress. */
+body,
+body::before,
+.panel,
+.panel-flat,
+.sunken,
+button,
+select,
+a,
+mark {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-duration: 200ms;
   transition-timing-function: ease-out;
 }
 
 mark.quote {
-  background: rgba(56, 189, 248, 0.14);
-  border-bottom: 1px solid var(--color-dial);
-  border-radius: 2px;
+  background: var(--quote-bg);
+  border-bottom: 1.5px solid var(--quote-line);
+  border-radius: 3px;
   color: inherit;
-  padding: 0 1px;
+  padding: 1px 2px;
 }
 
-.dialing::after {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-dial);
-  animation: blink 1s steps(2, start) infinite;
+.scroll-soft {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
 }
 
-@keyframes blink {
-  to {
-    visibility: hidden;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 1ms !important;
   }
 }

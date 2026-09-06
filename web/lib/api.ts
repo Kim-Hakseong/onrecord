@@ -12,6 +12,19 @@ export type RuleStep = {
   rule: string;
   status: "passed" | "failed" | "not_reached";
   detail: string;
+  /** The rule that actually produced the verdict. */
+  decided: boolean;
+};
+
+/** One turn of the call, with its body pre-cut against the confirmed quote
+ *  spans so the highlight is the adjudicator's range, not a re-search. */
+export type TranscriptLine = {
+  speaker: string;
+  text: string;
+  offset_seconds: number | null;
+  start: number;
+  end: number;
+  segments: { text: string; field: string | null }[];
 };
 
 export type LedgerRow = {
@@ -67,10 +80,23 @@ export type Subject = {
   known_values: Record<string, string>;
 };
 
+export type LedgerGroup = {
+  subject_id: string;
+  label: string;
+  contact_name: string;
+  contact_org: string;
+  known_values: Record<string, string>;
+  rows: LedgerRow[];
+  counts: Record<VerdictName, number>;
+  urgency: number;
+  open_count: number;
+};
+
 export type LedgerResponse = {
   schema: string | null;
   subjects: Subject[];
   rows: LedgerRow[];
+  groups: LedgerGroup[];
   history: LedgerRow[];
   counts: Record<VerdictName, number>;
 };
@@ -95,6 +121,7 @@ export type CallDetail = {
     task: string;
     structured_result: Record<string, unknown>;
   };
+  lines: TranscriptLine[];
   rows: LedgerRow[];
   counts: Record<VerdictName, number>;
   rejected_spans: RejectedSpan[];
