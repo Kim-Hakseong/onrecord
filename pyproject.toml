@@ -17,6 +17,7 @@ dependencies = [
 
 [project.scripts]
 onrecord = "onrecord.cli:main"
+onrecord-mcp = "onrecord.mcp_server:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "httpx>=0.28.1"]
@@ -33,4 +34,8 @@ testpaths = ["tests"]
 addopts = "-q"
 
 [dependency-groups]
-dev = ["pytest>=8.0", "httpx>=0.28.1"]
+dev = [
+    "pytest>=8.0",
+    "httpx>=0.28.1",
+    "anyio>=4.15.1",
+]

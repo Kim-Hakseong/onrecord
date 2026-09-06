@@ -512,6 +512,7 @@ dev = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "anyio" },
     { name = "httpx" },
     { name = "pytest" },
 ]
@@ -531,6 +532,7 @@ provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "anyio", specifier = ">=4.15.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pytest", specifier = ">=8.0" },
 ]
