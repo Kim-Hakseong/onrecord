@@ -132,8 +132,15 @@ the CALL-E Python SDK (`calle-ai`) at runtime, and all of that is isolated in
 transcript, and the requeue.
 
 ```bash
+cd web && npm install && cd ..
+./scripts/dev.sh                 # api on :8799, dashboard on :3000, ctrl-c stops both
+```
+
+Or run the two halves yourself:
+
+```bash
 uv run onrecord serve            # API on :8799
-cd web && npm install && npm run dev
+cd web && npm run dev
 ```
 
 ## What does not work yet
