@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Field, Grain } from "@/components/field";
 import { themeScript } from "@/components/theme";
 import "./globals.css";
 
@@ -28,7 +29,12 @@ export default function RootLayout({
         {/* Applies the stored theme before first paint. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Gradient (CSS) → dot field → content → grain. */}
+        <Field />
+        {children}
+        <Grain />
+      </body>
     </html>
   );
 }

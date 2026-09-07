@@ -83,14 +83,14 @@ export function VerdictCounts({
             </span>
           </>
         );
-        const className = `pill inline-flex items-center gap-1.5 ${
+        const className = `pill inline-flex items-center gap-1.5 border ${
           compact ? "px-2 py-[2px]" : "px-3 py-1"
         }`;
         const style = {
           background: TINT[verdict],
           color: FG[verdict],
+          borderColor: active ? FG[verdict] : "transparent",
           opacity: dimmed ? 0.35 : value === 0 ? 0.55 : 1,
-          boxShadow: active ? `0 0 0 2px ${FG[verdict]}` : undefined,
         };
 
         if (!onSelect) {

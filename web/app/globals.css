@@ -54,17 +54,20 @@
   --accent: #7b5cd6;
   --accent-ink: #ffffff;
 
-  --confirmed-bg: #d9f0e5;
-  --confirmed-fg: #16704d;
-  --contradicted-bg: #fbdae2;
-  --contradicted-fg: #a82348;
-  --unresolved-bg: #fbe8c9;
-  --unresolved-fg: #815310;
-  --noauthority-bg: #e7defa;
-  --noauthority-fg: #5636a6;
+  --confirmed-bg: #e8f5ef;
+  --confirmed-fg: #1d6a4c;
+  --contradicted-bg: #fbe6eb;
+  --contradicted-fg: #a03a54;
+  --unresolved-bg: #fbf0de;
+  --unresolved-fg: #7a5a1e;
+  --noauthority-bg: #eee8fb;
+  --noauthority-fg: #5c489f;
 
   --quote-bg: rgba(123, 92, 214, 0.13);
   --quote-bg-strong: rgba(123, 92, 214, 0.26);
+  --grain-opacity: 0.05;
+  --field-dot: 123, 92, 214;
+  --field-alpha: 0.19;
   --quote-line: rgba(123, 92, 214, 0.55);
   --shadow-lift: 0 14px 40px rgba(90, 70, 140, 0.16);
 }
@@ -97,17 +100,20 @@
   --accent: #b39cf5;
   --accent-ink: #1b1428;
 
-  --confirmed-bg: rgba(52, 211, 153, 0.15);
-  --confirmed-fg: #6ee7b7;
-  --contradicted-bg: rgba(248, 113, 113, 0.13);
-  --contradicted-fg: #fca5a5;
-  --unresolved-bg: rgba(251, 191, 36, 0.15);
-  --unresolved-fg: #fcd34d;
-  --noauthority-bg: rgba(167, 139, 250, 0.14);
-  --noauthority-fg: #c4b5fd;
+  --confirmed-bg: rgba(110, 231, 183, 0.11);
+  --confirmed-fg: #9ce9c6;
+  --contradicted-bg: rgba(252, 165, 165, 0.11);
+  --contradicted-fg: #f3b6b6;
+  --unresolved-bg: rgba(252, 211, 77, 0.11);
+  --unresolved-fg: #f0d79a;
+  --noauthority-bg: rgba(196, 181, 253, 0.12);
+  --noauthority-fg: #cec2f7;
 
   --quote-bg: rgba(179, 156, 245, 0.2);
   --quote-bg-strong: rgba(179, 156, 245, 0.36);
+  --grain-opacity: 0.075;
+  --field-dot: 196, 181, 253;
+  --field-alpha: 0.24;
   --quote-line: rgba(179, 156, 245, 0.7);
   --shadow-lift: 0 16px 44px rgba(0, 0, 0, 0.5);
 }
@@ -134,7 +140,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
   pointer-events: none;
   opacity: var(--mesh-alpha);
   /* Centres are inside the viewport on purpose. Pushed outside — which is what
@@ -224,9 +230,10 @@ mark {
 
 .quote:hover,
 .quote[data-active="true"] {
+  /* Deeper wash and a heavier rule rather than a halo: a zero-offset glow is
+     decoration pretending to be depth. */
   background: var(--quote-bg-strong);
-  border-bottom-color: var(--quote-line);
-  box-shadow: 0 0 0 2px var(--quote-bg-strong);
+  border-bottom-width: 2px;
 }
 
 /* Raises on hover, settles on press. 1px, because a ledger row that leaps is
@@ -263,22 +270,81 @@ mark {
 
 /* Fires when a card is jumped to from a transcript quote, so the eye lands on
    the right one. Tied to a real navigation, and it plays once. */
+/* Where the eye lands after jumping from a quote. Border and elevation, both
+   real properties of the card, rather than a ring bolted onto it. */
 @keyframes settle {
   from {
-    box-shadow: 0 0 0 3px var(--quote-line);
+    border-color: var(--quote-line);
+    box-shadow: var(--shadow-lift);
   }
   to {
+    border-color: var(--hairline);
     box-shadow: var(--shadow-card);
   }
 }
 
 .settled {
-  animation: settle 700ms ease-out;
+  animation: settle 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The parts of the page we did not draw still belong to the design. */
+::selection {
+  background: var(--quote-bg-strong);
+  color: var(--ink);
+}
+
+:root {
+  caret-color: var(--accent);
+  accent-color: var(--accent);
 }
 
 .scroll-soft {
   scrollbar-width: thin;
   scrollbar-color: var(--hairline-strong) transparent;
+}
+
+.scroll-soft::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scroll-soft::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: var(--radius-pill);
+}
+
+.scroll-soft::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Anything that is a measurement lines up column-wise. */
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Texture -------------------------------------------------------------
+   Fine monochrome grain over the whole surface, including the cards. It is
+   what stops a large flat gradient from reading as a rendering artefact, and
+   it is the one thing in the reference that is not colour or shape. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 190px 190px;
+}
+
+/* The dot field sits between the gradient and the content. */
+.field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
