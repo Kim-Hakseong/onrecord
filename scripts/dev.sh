@@ -20,22 +20,56 @@ if [ ! -f "$DB" ]; then
   uv run onrecord --replay --schema schemas/reference_check.yaml --db "$DB" >/dev/null
 fi
 
+# Job control so each half lands in its own process group. Without it, killing
+# `npm run dev` leaves the `next-server` it spawned behind, holding the port.
+set -m
+
 # Stop both when this script does, however it exits.
-pids=()
+api_pid=""
+web_pid=""
+stop() {
+  [ -z "$1" ] && return 0
+  # The group first, then the process, in case job control was unavailable.
+  kill -TERM -- "-$1" 2>/dev/null || kill -TERM "$1" 2>/dev/null
+  return 0
+}
+
+port_holders() {
+  command -v lsof >/dev/null 2>&1 || return 0
+  lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null || true
+}
+
+# Next spawns its dev server into a session of its own, so neither the child
+# pid nor its process group reaches it and it keeps the port after Ctrl-C.
+# Whatever is still listening gets released by port.
+release_port() {
+  local holders
+  holders=$(port_holders "$1")
+  [ -n "$holders" ] && kill $holders 2>/dev/null
+  sleep 1
+  # Escalate for anything that ignored the first signal mid-compile.
+  holders=$(port_holders "$1")
+  [ -n "$holders" ] && kill -9 $holders 2>/dev/null
+  return 0
+}
+
 cleanup() {
   trap - EXIT INT TERM
-  for pid in "${pids[@]:-}"; do
-    [ -n "$pid" ] && kill "$pid" 2>/dev/null || true
-  done
-  wait 2>/dev/null || true
+  stop "$api_pid"
+  stop "$web_pid"
+  sleep 1
+  release_port "$API_PORT"
+  release_port "$WEB_PORT"
+  wait 2>/dev/null
+  return 0
 }
 trap cleanup EXIT INT TERM
 
 uv run onrecord serve --db "$DB" --port "$API_PORT" &
-pids+=($!)
+api_pid=$!
 
 NEXT_PUBLIC_API_BASE="http://127.0.0.1:${API_PORT}" npm --prefix web run dev -- --port "$WEB_PORT" &
-pids+=($!)
+web_pid=$!
 
 echo
 echo "  dashboard  http://localhost:${WEB_PORT}"
@@ -43,5 +77,20 @@ echo "  api        http://127.0.0.1:${API_PORT}/api/meta"
 echo "  ctrl-c to stop both"
 echo
 
-# Exit as soon as either half dies, rather than leaving half a stack running.
-wait -n
+# Hold until either half stops serving, rather than leaving half a stack up.
+# Watching the ports rather than the pids: `uv` and `npm` are wrappers that
+# outlive the server they launched, so a dead server does not mean a dead pid.
+# (Polling because macOS's bash 3.2 has no `wait -n`.)
+grace=25
+while :; do
+  sleep 1
+  kill -0 "$api_pid" 2>/dev/null || break
+  kill -0 "$web_pid" 2>/dev/null || break
+  if [ "$grace" -gt 0 ]; then
+    grace=$((grace - 1))       # both halves still binding their ports
+  else
+    [ -n "$(port_holders "$API_PORT")" ] || break
+    [ -n "$(port_holders "$WEB_PORT")" ] || break
+  fi
+done
+echo "one half stopped serving — shutting the other down" >&2
